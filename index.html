@@ -836,6 +836,218 @@
 
     /* 
      * =========================================================================
+     * RESPONSIVE LAYOUT (Mobile, Tablet, Desktop)
+     * =========================================================================
+     */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: var(--primary);
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 6px;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(2px);
+      z-index: 19;
+    }
+
+    /* Small screens / Phones (max-width: 768px) */
+    @media screen and (max-width: 768px) {
+      body {
+        font-size: 13.5px;
+      }
+
+      .mobile-menu-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        width: 270px;
+        z-index: 30;
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .sidebar.open {
+        transform: translateX(280px);
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      .top-navbar {
+        padding: 0 14px;
+        height: 56px;
+      }
+
+      .page-heading {
+        font-size: 15px;
+        gap: 6px;
+      }
+
+      .header-actions {
+        gap: 6px;
+      }
+
+      .header-actions .btn {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      .header-actions .btn span {
+        display: none; /* Icon-only on mobile */
+      }
+
+      .header-actions .btn i {
+        margin: 0;
+      }
+
+      .content-area {
+        padding: 14px 10px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .stat-card {
+        padding: 12px 14px;
+        gap: 12px;
+      }
+
+      .stat-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 18px;
+        border-radius: 8px;
+      }
+
+      .stat-info h4 {
+        font-size: 11px;
+      }
+
+      .stat-info .stat-number {
+        font-size: 20px;
+      }
+
+      .view-toggle-bar {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .toggle-group {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .toggle-btn {
+        padding: 6px 4px;
+        font-size: 11.5px;
+        justify-content: center;
+      }
+
+      .toggle-btn i {
+        display: none;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .chart-canvas-wrapper {
+        height: 230px;
+      }
+
+      .filter-panel {
+        padding: 14px;
+      }
+
+      .filter-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .form-row-2, .form-row-3 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .modal-dialog {
+        max-width: 95vw;
+        border-radius: 12px;
+      }
+
+      .modal-header, .modal-body, .modal-footer {
+        padding: 14px 16px;
+      }
+
+      .book-container {
+        padding: 14px 10px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
+
+      .book-title {
+        font-size: 16px;
+      }
+
+      .book-subtitle-line {
+        font-size: 12px;
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+      }
+
+      table.official-book-table th, table.official-book-table td {
+        padding: 6px 6px;
+        font-size: 11.5px;
+      }
+
+      /* Dashboard quick summary tables container */
+      #tab-dashboard > div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+    }
+
+    /* Medium screens / Tablets (769px to 1024px) */
+    @media screen and (min-width: 769px) and (max-width: 1024px) {
+      .sidebar {
+        width: 220px;
+      }
+      .brand-title {
+        font-size: 12px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 
+     * =========================================================================
      * STRICT PRINT CSS RULES (As mandated by Cambodian Education Institution specs)
      * =========================================================================
      */
@@ -998,12 +1210,20 @@
     </div>
   </aside>
 
+  <!-- Mobile Sidebar Overlay Backdrop -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar(false)"></div>
+
   <!-- Main Workspace -->
   <main class="main-wrapper">
     <header class="top-navbar">
-      <div class="page-heading" id="currentPageHeading">
-        <i class="fa-solid fa-chart-pie"></i>
-        <span>ផ្ទាំងគ្រប់គ្រង</span>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="mobile-menu-btn" onclick="toggleMobileSidebar(true)" aria-label="បើក Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div class="page-heading" id="currentPageHeading">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>ផ្ទាំងគ្រប់គ្រង</span>
+        </div>
       </div>
 
       <div class="header-actions">
@@ -1758,6 +1978,23 @@
       } else if (tabId === 'settings') {
         heading.innerHTML = `<i class="fa-solid fa-sliders"></i> <span>ការកំណត់ប្រព័ន្ធ</span>`;
         quickAddBtn.innerText = "ចុះលិខិតថ្មី";
+      }
+
+      // Automatically close mobile sidebar if open
+      toggleMobileSidebar(false);
+    }
+
+    function toggleMobileSidebar(open) {
+      const sidebar = document.querySelector(".sidebar");
+      const overlay = document.getElementById("sidebarOverlay");
+      if (!sidebar || !overlay) return;
+
+      if (open) {
+        sidebar.classList.add("open");
+        overlay.classList.add("active");
+      } else {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
       }
     }
 
