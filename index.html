@@ -1,0 +1,3073 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ប្រព័ន្ធគ្រប់គ្រងសៀវភៅចុះលិខិតចេញ-ចូល - ស្ថាប័នអប់រំកម្ពុជា</title>
+  
+  <!-- Khmer Fonts & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Moul&family=Siemreap&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Chart.js for data visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <style>
+    :root {
+      --primary: #1b4965;
+      --primary-dark: #0f3044;
+      --primary-light: #62b6cb;
+      --accent: #d4a373;
+      --success: #2d6a4f;
+      --danger: #d90429;
+      --warning: #ffb703;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --table-border: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Kantumruy Pro', 'Siemreap', sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      font-size: 14.5px;
+      line-height: 1.6;
+    }
+
+    /* Sidebar Layout */
+    .sidebar {
+      width: 270px;
+      background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.06);
+      z-index: 10;
+      transition: all 0.3s ease;
+    }
+
+    .brand-section {
+      padding: 24px 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .brand-logo {
+      width: 68px;
+      height: 68px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .brand-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .brand-title {
+      font-family: 'Moul', serif;
+      font-size: 13.5px;
+      color: #ffd166;
+      line-height: 1.7;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 11.5px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 16px 12px;
+      flex-grow: 1;
+    }
+
+    .nav-item {
+      margin-bottom: 6px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      color: #e2e8f0;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background-color: rgba(255,255,255,0.1);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .nav-link.active {
+      background-color: #ffd166;
+      color: #0f3044;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(255, 209, 102, 0.3);
+    }
+
+    .nav-link i {
+      font-size: 17px;
+      width: 22px;
+      text-align: center;
+    }
+
+    .connection-badge {
+      margin: 15px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(0,0,0,0.25);
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #06d6a0;
+      box-shadow: 0 0 8px #06d6a0;
+      flex-shrink: 0;
+    }
+
+    .status-dot.offline {
+      background-color: #ef476f;
+      box-shadow: 0 0 8px #ef476f;
+    }
+
+    /* Main Area */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      min-width: 0;
+    }
+
+    .top-navbar {
+      height: 64px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+    }
+
+    .page-heading {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .content-area {
+      padding: 24px;
+      flex-grow: 1;
+    }
+
+    /* Tab Sections */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: var(--primary);
+    }
+
+    .stat-card.incoming::after {
+      background: #0284c7;
+    }
+    .stat-card.outgoing::after {
+      background: #059669;
+    }
+    .stat-card.monthly::after {
+      background: #d97706;
+    }
+
+    .stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 12px;
+      background: #f0fdf4;
+      color: #059669;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .stat-card.incoming .stat-icon {
+      background: #e0f2fe;
+      color: #0284c7;
+    }
+    .stat-card.monthly .stat-icon {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    /* Dashboard View Toggle (Number vs Chart) */
+    .view-toggle-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      background: #ffffff;
+      padding: 12px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .toggle-group {
+      display: flex;
+      background: #f1f5f9;
+      padding: 4px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+
+    .toggle-btn {
+      border: none;
+      background: transparent;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .toggle-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 992px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chart-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .chart-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .chart-card-header h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-canvas-wrapper {
+      position: relative;
+      height: 290px;
+      width: 100%;
+    }
+
+    .stat-info h4 {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-info .stat-number {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-top: 4px;
+      font-family: 'Kantumruy Pro', sans-serif;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: 7px;
+      font-size: 13.5px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      box-shadow: 0 4px 10px rgba(27, 73, 101, 0.25);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+    .btn-success:hover {
+      background-color: #1b4332;
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+    .btn-danger:hover {
+      background-color: #b00020;
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 6px;
+    }
+
+    /* Filters & Controls Toolbar */
+    .filter-panel {
+      background: #ffffff;
+      padding: 18px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      align-items: end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .form-control {
+      padding: 9px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13.5px;
+      outline: none;
+      background-color: #fff;
+      transition: border 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(27, 73, 101, 0.15);
+    }
+
+    /* Table Container */
+    .card-table {
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .table-topbar {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fdfdfd;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    table.data-table th, table.data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 13.5px;
+      vertical-align: middle;
+    }
+
+    table.data-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+    }
+
+    table.data-table tbody tr:hover {
+      background-color: #f8faff;
+    }
+
+    /* Official Book Format Styles (Web View & Print Preview) */
+    .book-container {
+      background: #fff;
+      padding: 30px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin: 0 auto 30px;
+      max-width: 1100px;
+    }
+
+    .book-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .book-header .institution-meta {
+      font-size: 13px;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    .book-title {
+      font-family: 'Moul', serif;
+      font-size: 20px;
+      color: #1e293b;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .book-subtitle-line {
+      font-family: 'Siemreap', 'Kantumruy Pro', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f172a;
+      margin: 6px 0;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header-underline-val {
+      font-weight: 700;
+      color: #1b4965;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      padding: 0 4px;
+    }
+
+    /* 5 Columns Official Table */
+    table.official-book-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 2px solid var(--table-border);
+      margin-top: 15px;
+      font-family: 'Siemreap', 'Kantumruy Pro', sans-serif;
+    }
+
+    table.official-book-table th, 
+    table.official-book-table td {
+      border: 1px solid var(--table-border);
+      padding: 8px 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    table.official-book-table th {
+      background-color: #f1f5f9;
+      text-align: center;
+      font-weight: 700;
+      color: #000;
+    }
+
+    /* Exact Column Width Allocations for 5 Columns */
+    table.official-book-table .col-no {
+      width: 70px;
+      text-align: center;
+      font-weight: bold;
+    }
+    table.official-book-table .col-qty {
+      width: 80px;
+      text-align: center;
+    }
+    table.official-book-table .col-ministry {
+      width: 200px;
+    }
+    table.official-book-table .col-orig-no {
+      width: 180px;
+      text-align: center;
+    }
+    table.official-book-table .col-remarks {
+      width: 150px;
+    }
+    table.official-book-table .col-content {
+      /* Flexible for maximum content readability */
+    }
+
+    .content-cell-title {
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+    .content-cell-date {
+      font-size: 11.5px;
+      color: #4b5563;
+      font-style: italic;
+    }
+
+    /* Attachment Links & Badges */
+    .attachment-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 4px;
+      padding: 3px 8px;
+      background: #e0f2fe;
+      color: #0369a1;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      max-width: 100%;
+      word-break: break-all;
+    }
+
+    .attachment-badge:hover {
+      background: #bae6fd;
+      color: #0c4a6e;
+      transform: translateY(-1px);
+    }
+
+    .attachment-badge i {
+      font-size: 11px;
+    }
+
+    .attachment-preview-box {
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border: 1px dashed var(--border-color);
+      border-radius: 6px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #ffffff;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+      animation: modalPop 0.2s ease-out;
+    }
+
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .modal-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #64748b;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    .close-modal-btn:hover {
+      color: var(--danger);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      background: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      border-radius: 0 0 14px 14px;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-row-1 {
+      margin-bottom: 16px;
+    }
+
+    /* Print Preview Controls */
+    .print-controls-bar {
+      background: #e2e8f0;
+      padding: 12px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Notification Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      background: #1e293b;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+      font-size: 13.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+    }
+    .toast.success { background: #059669; }
+    .toast.error { background: #dc2626; }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* 
+     * =========================================================================
+     * STRICT PRINT CSS RULES (As mandated by Cambodian Education Institution specs)
+     * =========================================================================
+     */
+    @media print {
+      /* Hide all UI elements, navigation, buttons, search bars, etc. */
+      .sidebar,
+      .top-navbar,
+      .header-actions,
+      .filter-panel,
+      .table-topbar,
+      .print-controls-bar,
+      .btn,
+      .nav-menu,
+      .connection-badge,
+      .toast-container,
+      .modal-overlay,
+      .stats-grid,
+      .no-print {
+        display: none !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: 'Khmer OS Siemreap', 'Siemreap', 'Kantumruy Pro', 'Battambang', serif !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 11pt !important;
+      }
+
+      .main-wrapper, .content-area {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+      }
+
+      .book-container {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .book-title {
+        font-family: 'Khmer OS Muol Light', 'Moul', serif !important;
+        font-size: 15pt !important;
+        color: #000 !important;
+        margin-bottom: 12pt !important;
+      }
+
+      .book-subtitle-line {
+        font-size: 11.5pt !important;
+        color: #000 !important;
+        margin: 6pt 0 !important;
+        justify-content: space-between !important;
+      }
+
+      .header-underline-val {
+        color: #000 !important;
+        font-weight: bold !important;
+      }
+
+      /* Exact 5 column table borders and sizing */
+      table.official-book-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1.5pt solid #000000 !important;
+        margin-top: 10pt !important;
+        page-break-inside: auto;
+      }
+
+      table.official-book-table th, 
+      table.official-book-table td {
+        border: 1pt solid #000000 !important;
+        color: #000000 !important;
+        padding: 5pt 7pt !important;
+        font-size: 10.5pt !important;
+        line-height: 1.3 !important;
+      }
+
+      table.official-book-table tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+
+      table.official-book-table thead {
+        display: table-header-group;
+      }
+
+      table.official-book-table th {
+        background-color: #f2f2f2 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Paper size specification dynamic classes */
+      body.paper-a4 {
+        /* A4 standard landscape or portrait */
+      }
+
+      @page {
+        margin: 1.2cm 1.2cm 1.2cm 1.2cm;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-section">
+      <div class="brand-logo" id="sidebarLogoContainer">
+        <i class="fa-solid fa-book-bookmark" style="font-size: 32px; color: var(--primary);"></i>
+      </div>
+      <div class="brand-title" id="sideInstName">ក្រសួងអប់រំ យុវជន និងកីឡា</div>
+      <div class="brand-subtitle" id="sideDeptName">សៀវភៅចុះលិខិតផ្លូវការ</div>
+    </div>
+
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a class="nav-link active" onclick="switchTab('dashboard')">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>ផ្ទាំងគ្រប់គ្រង (Dashboard)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('outgoing')">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>សៀវភៅចុះលិខិតចេញ</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('incoming')">
+          <i class="fa-solid fa-inbox"></i>
+          <span>សៀវភៅចុះលិខិតចូល</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('print_preview')">
+          <i class="fa-solid fa-print"></i>
+          <span>ទម្រង់បោះពុម្ព (Print Book)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="switchTab('settings')">
+          <i class="fa-solid fa-sliders"></i>
+          <span>ការកំណត់ (Settings)</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="connection-badge">
+      <div class="status-dot" id="cloudStatusDot"></div>
+      <div>
+        <div style="font-weight: 600;" id="cloudStatusText">ភ្ជាប់ជាមួយ Local Storage</div>
+        <div style="opacity: 0.75; font-size: 10px;" id="cloudStatusSub">អាចភ្ជាប់ Google Sheets API</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <main class="main-wrapper">
+    <header class="top-navbar">
+      <div class="page-heading" id="currentPageHeading">
+        <i class="fa-solid fa-chart-pie"></i>
+        <span>ផ្ទាំងគ្រប់គ្រង</span>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-outline" onclick="syncWithGoogleSheets()" title="សមកាលកម្មជាមួយ Google Sheets">
+          <i class="fa-solid fa-arrows-rotate" id="syncSpinner"></i> <span>Refresh / Sync</span>
+        </button>
+        <button class="btn btn-primary" onclick="openAddModal()">
+          <i class="fa-solid fa-plus"></i> <span id="quickAddBtnText">ចុះលិខិតចេញថ្មី</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- ========================================== -->
+      <!-- TAB 1: DASHBOARD                           -->
+      <!-- ========================================== -->
+      <section id="tab-dashboard" class="tab-pane active">
+        <!-- View Toggle Controls (Number vs Chart vs Both) -->
+        <div class="view-toggle-bar">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-weight: 700; color: #1e293b; font-size: 14px;">
+              <i class="fa-solid fa-chart-simple" style="color: var(--primary);"></i> ទម្រង់បង្ហាញទិន្នន័យ៖
+            </span>
+            <div class="toggle-group">
+              <button type="button" class="toggle-btn active" id="btnViewBoth" onclick="setDashboardViewMode('both')">
+                <i class="fa-solid fa-table-cells-large"></i> បង្ហាញទាំងពីរ (លេខ & ក្រាប)
+              </button>
+              <button type="button" class="toggle-btn" id="btnViewNumbers" onclick="setDashboardViewMode('numbers')">
+                <i class="fa-solid fa-arrow-down-1-9"></i> លេខ (Numbers)
+              </button>
+              <button type="button" class="toggle-btn" id="btnViewCharts" onclick="setDashboardViewMode('charts')">
+                <i class="fa-solid fa-chart-column"></i> ក្រាប (Charts)
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 12.5px; font-weight: 600; color: #475569;">ទិន្នន័យក្រាបប្រចាំ៖</label>
+            <select id="dashChartYearSelect" class="form-control" style="padding: 5px 10px; font-size: 13px;" onchange="updateDashboardCharts()">
+              <!-- Dynamic Years -->
+            </select>
+          </div>
+        </div>
+
+        <!-- 1. NUMBERS VIEW: Stat Cards -->
+        <div class="stats-grid" id="dashboardNumbersContainer">
+          <div class="stat-card outgoing">
+            <div class="stat-icon"><i class="fa-solid fa-paper-plane"></i></div>
+            <div class="stat-info">
+              <h4>លិខិតចេញសរុប</h4>
+              <div class="stat-number" id="dashTotalOutgoing">0</div>
+            </div>
+          </div>
+          <div class="stat-card incoming">
+            <div class="stat-icon"><i class="fa-solid fa-inbox"></i></div>
+            <div class="stat-info">
+              <h4>លិខិតចូលសរុប</h4>
+              <div class="stat-number" id="dashTotalIncoming">0</div>
+            </div>
+          </div>
+          <div class="stat-card monthly">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="stat-info">
+              <h4>លិខិតចេញប្រចាំខែនេះ</h4>
+              <div class="stat-number" id="dashMonthlyOutgoing">0</div>
+            </div>
+          </div>
+          <div class="stat-card monthly">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <div class="stat-info">
+              <h4>លិខិតចូលប្រចាំខែនេះ</h4>
+              <div class="stat-number" id="dashMonthlyIncoming">0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. CHARTS VIEW: Interactive Visualizations -->
+        <div class="charts-grid" id="dashboardChartsContainer">
+          <!-- Monthly Trend Chart -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3><i class="fa-solid fa-chart-line" style="color: var(--primary);"></i> ក្រាបប្រៀបធៀបលិខិតចេញ-ចូល តាមខែនីមួយៗ (Monthly Trend)</h3>
+              <span id="chartYearBadge" style="background: #e2e8f0; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 4px;">ឆ្នាំ 2026</span>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="monthlyTrendChartCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Total Distribution Doughnut Chart -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <h3><i class="fa-solid fa-chart-pie" style="color: #0284c7;"></i> សមាមាត្រលិខិតសរុប (Ratio)</h3>
+            </div>
+            <div class="chart-canvas-wrapper">
+              <canvas id="distributionChartCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Summary Lists -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <!-- Recent Outgoing -->
+          <div class="card-table">
+            <div class="table-topbar">
+              <h3 style="font-size: 15px; font-weight: 700; color: #1e293b;"><i class="fa-solid fa-paper-plane" style="color: #059669; margin-right: 8px;"></i>លិខិតចេញថ្មីៗ</h3>
+              <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;" onclick="switchTab('outgoing')">មើលទាំងអស់</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ល.រ</th>
+                    <th>ខ្លឹមសារលិខិត</th>
+                    <th>ក្រសួងទទួល</th>
+                    <th>កាលបរិច្ឆេទ</th>
+                  </tr>
+                </thead>
+                <tbody id="dashRecentOutgoingBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Recent Incoming -->
+          <div class="card-table">
+            <div class="table-topbar">
+              <h3 style="font-size: 15px; font-weight: 700; color: #1e293b;"><i class="fa-solid fa-inbox" style="color: #0284c7; margin-right: 8px;"></i>លិខិតចូលថ្មីៗ</h3>
+              <button class="btn btn-outline" style="padding: 5px 10px; font-size: 12px;" onclick="switchTab('incoming')">មើលទាំងអស់</button>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>ល.រ</th>
+                    <th>ខ្លឹមសារលិខិត</th>
+                    <th>ក្រសួងដើម</th>
+                    <th>លេខលិខិតដើម</th>
+                  </tr>
+                </thead>
+                <tbody id="dashRecentIncomingBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 2: សៀវភៅចុះលិខិតចេញ (OUTGOING)        -->
+      <!-- ========================================== -->
+      <section id="tab-outgoing" class="tab-pane">
+        <!-- Filter Bar -->
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="form-group">
+              <label><i class="fa-solid fa-magnifying-glass"></i> ស្វែងរកខ្លឹមសារ / ក្រសួង</label>
+              <input type="text" id="outFilterSearch" class="form-control" placeholder="វាយស្វែងរក..." oninput="renderOutgoingTable()">
+            </div>
+            <div class="form-group">
+              <label>ឆ្នាំ</label>
+              <select id="outFilterYear" class="form-control" onchange="renderOutgoingTable()">
+                <option value="">ទាំងអស់</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ខែ</label>
+              <select id="outFilterMonth" class="form-control" onchange="renderOutgoingTable()">
+                <option value="">ទាំងអស់</option>
+                <option value="01">មករា (01)</option>
+                <option value="02">កុម្ភៈ (02)</option>
+                <option value="03">មីនា (03)</option>
+                <option value="04">មេសា (04)</option>
+                <option value="05">ឧសភា (05)</option>
+                <option value="06">មិថុនា (06)</option>
+                <option value="07">កក្កដា (07)</option>
+                <option value="08">សីហា (08)</option>
+                <option value="09">កញ្ញា (09)</option>
+                <option value="10">តុលា (10)</option>
+                <option value="11">វិច្ឆិកា (11)</option>
+                <option value="12">ធ្នូ (12)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ពីលេខរៀង - ដល់លេខរៀង</label>
+              <div style="display: flex; gap: 6px;">
+                <input type="number" id="outFilterFromNo" class="form-control" placeholder="ពីលេខ" oninput="renderOutgoingTable()">
+                <input type="number" id="outFilterToNo" class="form-control" placeholder="ដល់លេខ" oninput="renderOutgoingTable()">
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline" style="width: 100%;" onclick="resetOutgoingFilter()">
+                <i class="fa-solid fa-rotate-left"></i> កំណត់ឡើងវិញ
+              </button>
+              <button class="btn btn-primary" onclick="goToPrint('outgoing')">
+                <i class="fa-solid fa-print"></i> បោះពុម្ព
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Book View for Outgoing -->
+        <div class="book-container">
+          <div class="book-header">
+            <div class="institution-meta" id="outInstHeading"></div>
+            <h1 class="book-title">សៀវភៅចុះលិខិតចេញ</h1>
+            <div class="book-subtitle-line">
+              <div>លេខ <span class="header-underline-val" id="outCalcNoRange">........... ដល់លេខ ...........</span> សរុប <span class="header-underline-val" id="outCalcTotal">...........</span></div>
+              <div>ថ្ងៃទី <span class="header-underline-val" id="outCalcDateRange">.............. ខែ ................. ឆ្នាំ ............. ដល់ ថ្ងៃទី ............. ខែ ................ ឆ្នាំ ........................</span></div>
+            </div>
+          </div>
+
+          <!-- 5 Columns Official Book Table -->
+          <table class="official-book-table" id="tableOutgoingBook">
+            <thead>
+              <tr>
+                <th class="col-no">ល.រ</th>
+                <th class="col-content">ខ្លឹមសារលិខិត ថ្ងៃទី ខែ ឆ្នាំ</th>
+                <th class="col-qty">ចំនួន</th>
+                <th class="col-ministry">ក្រសួងទទួល</th>
+                <th class="col-remarks">សេចក្ដីផ្សេងៗ</th>
+                <th class="no-print" style="width: 80px;">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody id="outgoingTableBody">
+              <!-- Rendered Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 3: សៀវភៅចុះលិខិតចូល (INCOMING)        -->
+      <!-- ========================================== -->
+      <section id="tab-incoming" class="tab-pane">
+        <!-- Filter Bar -->
+        <div class="filter-panel">
+          <div class="filter-grid">
+            <div class="form-group">
+              <label><i class="fa-solid fa-magnifying-glass"></i> ស្វែងរកខ្លឹមសារ / ក្រសួងដើម</label>
+              <input type="text" id="inFilterSearch" class="form-control" placeholder="វាយស្វែងរក..." oninput="renderIncomingTable()">
+            </div>
+            <div class="form-group">
+              <label>ឆ្នាំ</label>
+              <select id="inFilterYear" class="form-control" onchange="renderIncomingTable()">
+                <option value="">ទាំងអស់</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ខែ</label>
+              <select id="inFilterMonth" class="form-control" onchange="renderIncomingTable()">
+                <option value="">ទាំងអស់</option>
+                <option value="01">មករា (01)</option>
+                <option value="02">កុម្ភៈ (02)</option>
+                <option value="03">មីនា (03)</option>
+                <option value="04">មេសា (04)</option>
+                <option value="05">ឧសភា (05)</option>
+                <option value="06">មិថុនា (06)</option>
+                <option value="07">កក្កដា (07)</option>
+                <option value="08">សីហា (08)</option>
+                <option value="09">កញ្ញា (09)</option>
+                <option value="10">តុលា (10)</option>
+                <option value="11">វិច្ឆិកា (11)</option>
+                <option value="12">ធ្នូ (12)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>ពីលេខរៀង - ដល់លេខរៀង</label>
+              <div style="display: flex; gap: 6px;">
+                <input type="number" id="inFilterFromNo" class="form-control" placeholder="ពីលេខ" oninput="renderIncomingTable()">
+                <input type="number" id="inFilterToNo" class="form-control" placeholder="ដល់លេខ" oninput="renderIncomingTable()">
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-outline" style="width: 100%;" onclick="resetIncomingFilter()">
+                <i class="fa-solid fa-rotate-left"></i> កំណត់ឡើងវិញ
+              </button>
+              <button class="btn btn-primary" onclick="goToPrint('incoming')">
+                <i class="fa-solid fa-print"></i> បោះពុម្ព
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Official Book View for Incoming -->
+        <div class="book-container">
+          <div class="book-header">
+            <div class="institution-meta" id="inInstHeading"></div>
+            <h1 class="book-title">សៀវភៅចុះលិខិតចូល</h1>
+            <div class="book-subtitle-line">
+              <div>លេខ <span class="header-underline-val" id="inCalcNoRange">........... ដល់លេខ ...........</span> សរុប <span class="header-underline-val" id="inCalcTotal">...........</span></div>
+              <div>ថ្ងៃទី <span class="header-underline-val" id="inCalcDateRange">.............. ខែ ................. ឆ្នាំ ............. ដល់ ថ្ងៃទី ............. ខែ ................ ឆ្នាំ ........................</span></div>
+            </div>
+          </div>
+
+          <!-- 5 Columns Official Book Table -->
+          <table class="official-book-table" id="tableIncomingBook">
+            <thead>
+              <tr>
+                <th class="col-no">ល.រ</th>
+                <th class="col-content">ខ្លឹមសារលិខិត ក្រសួងដើម</th>
+                <th class="col-qty">ចំនួន</th>
+                <th class="col-orig-no">លេខលិខិតដើម ថ្ងៃទី ខែ ឆ្នាំ</th>
+                <th class="col-remarks">សេចក្ដីផ្សេងៗ</th>
+                <th class="no-print" style="width: 80px;">សកម្មភាព</th>
+              </tr>
+            </thead>
+            <tbody id="incomingTableBody">
+              <!-- Rendered Dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 4: PRINT PREVIEW                       -->
+      <!-- ========================================== -->
+      <section id="tab-print_preview" class="tab-pane">
+        <div class="print-controls-bar no-print">
+          <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
+              <label>ជ្រើសរើសសៀវភៅ:</label>
+              <select id="printBookSelector" class="form-control" style="width: 220px;" onchange="renderPrintPreview()">
+                <option value="outgoing">សៀវភៅចុះលិខិតចេញ</option>
+                <option value="incoming">សៀវភៅចុះលិខិតចូល</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
+              <label>ទំហំក្រដាស:</label>
+              <select id="printPaperSize" class="form-control" style="width: 110px;" onchange="changePaperSize(this.value)">
+                <option value="a4">A4</option>
+                <option value="a5">A5</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="flex-direction: row; align-items: center; gap: 8px;">
+              <label>តម្រង់ទិស:</label>
+              <select id="printOrientation" class="form-control" style="width: 120px;" onchange="changeOrientation(this.value)">
+                <option value="portrait">បញ្ឈរ (Portrait)</option>
+                <option value="landscape">ផ្តេក (Landscape)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="exportToCSV()">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button class="btn btn-success" onclick="window.print()">
+              <i class="fa-solid fa-print"></i> បោះពុម្ពឥឡូវនេះ (Print)
+            </button>
+          </div>
+        </div>
+
+        <!-- Render Target for Print Preview -->
+        <div id="printOutputContainer">
+          <!-- Dynamically cloned exact book markup -->
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- TAB 5: SETTINGS                            -->
+      <!-- ========================================== -->
+      <section id="tab-settings" class="tab-pane">
+        <div style="max-width: 800px; margin: 0 auto;">
+          <div class="card-table" style="padding: 24px;">
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+              <i class="fa-solid fa-building-columns"></i> ព័ត៌មានស្ថាប័នអប់រំ និងការកំណត់បោះពុម្ព
+            </h3>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>ឈ្មោះស្ថាប័ន / ក្រសួង</label>
+                <input type="text" id="setInstName" class="form-control" value="ក្រសួងអប់រំ យុវជន និងកីឡា">
+              </div>
+              <div class="form-group">
+                <label>ឈ្មោះការិយាល័យ / នាយកដ្ឋាន</label>
+                <input type="text" id="setDeptName" class="form-control" value="ការិយាល័យរដ្ឋបាល និងបុគ្គលិក">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>អាសយដ្ឋាន</label>
+                <input type="text" id="setAddress" class="form-control" value="រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា">
+              </div>
+              <div class="form-group">
+                <label>លេខទូរស័ព្ទ / Email</label>
+                <input type="text" id="setContact" class="form-control" value="023 210 140 / info@moeys.gov.kh">
+              </div>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>បង្ហាញ Header ស្ថាប័នពេល Print</label>
+                <select id="setShowHeaderPrint" class="form-control">
+                  <option value="yes">បង្ហាញ (Yes)</option>
+                  <option value="no">មិនបង្ហាញ (No - ប្រើតែចំណងជើងសៀវភៅ)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>ទំហំក្រដាសលំនាំដើម</label>
+                <select id="setDefaultPaper" class="form-control">
+                  <option value="a4">A4</option>
+                  <option value="a5">A5</option>
+                </select>
+              </div>
+            </div>
+
+            <h3 style="font-size: 17px; font-weight: 700; color: var(--primary); margin: 30px 0 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+              <i class="fa-brands fa-google-drive"></i> ការតភ្ជាប់ Google Sheets Database API
+            </h3>
+
+            <div class="form-group" style="margin-bottom: 16px;">
+              <label>Google Apps Script Web App URL</label>
+              <input type="url" id="setAppsScriptUrl" class="form-control" placeholder="https://script.google.com/macros/s/.../exec">
+              <small style="color: #64748b; margin-top: 4px;">
+                បិទភ្ជាប់ Web App URL ដែលបាន Deploy ពី Google Apps Script ដើម្បីរក្សាទុកទិន្នន័យដោយស្វ័យប្រវត្តិក្នង Google Sheets។ (បើទទេ នោះប្រព័ន្ធនឹងរក្សាទុកក្នុង Local Storage ដោយស្វ័យប្រវត្តិ)
+              </small>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label>Google Spreadsheet ID (ជាជម្រើសសម្រាប់យោង)</label>
+                <input type="text" id="setSpreadsheetId" class="form-control" placeholder="ឧ. 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms">
+              </div>
+              <div class="form-group">
+                <label>Google Drive Folder ID (សម្រាប់ឯកសារយោង)</label>
+                <input type="text" id="setDriveFolderId" class="form-control" placeholder="ឧ. 1abCdeFgHijKlmnoPqrstuVWXyz">
+              </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+              <button class="btn btn-outline" onclick="loadSampleData()">
+                <i class="fa-solid fa-vial"></i> បញ្ចូលទិន្នន័យគំរូសាកល្បង
+              </button>
+              <button class="btn btn-primary" onclick="saveSettings()">
+                <i class="fa-solid fa-floppy-disk"></i> រក្សាទុកការកំណត់
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD / EDIT OUTGOING LETTER          -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="modalOutgoing">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalOutTitle"><i class="fa-solid fa-paper-plane"></i> បញ្ចូលសៀវភៅចុះលិខិតចេញ</h3>
+        <button class="close-modal-btn" onclick="closeModal('modalOutgoing')">&times;</button>
+      </div>
+      <form id="formOutgoing" onsubmit="handleOutgoingSubmit(event)">
+        <input type="hidden" id="outId">
+        <div class="modal-body">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>លេខរៀង (ស្វ័យប្រវត្តិ) <span style="color: red;">*</span></label>
+              <input type="number" id="outNo" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label>ចំនួន (ច្បាប់/ឯកសារ) <span style="color: red;">*</span></label>
+              <input type="number" id="outQty" class="form-control" min="1" value="1" required>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>ថ្ងៃ <span style="color: red;">*</span></label>
+              <select id="outDay" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label>ខែ <span style="color: red;">*</span></label>
+              <select id="outMonth" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label>ឆ្នាំ <span style="color: red;">*</span></label>
+              <input type="number" id="outYear" class="form-control" value="2026" required>
+            </div>
+          </div>
+
+          <div class="form-row-1">
+            <div class="form-group">
+              <label>ខ្លឹមសារលិខិត <span style="color: red;">*</span></label>
+              <textarea id="outContent" class="form-control" rows="3" placeholder="កត់ត្រាខ្លឹមសារសង្ខេបរបស់លិខិត..." required></textarea>
+            </div>
+          </div>
+
+          <div class="form-row-1">
+            <div class="form-group">
+              <label>ក្រសួងទទួល / ស្ថាប័នទទួល <span style="color: red;">*</span></label>
+              <input list="ministrySuggestions" id="outMinistry" class="form-control" placeholder="ជ្រើសពីបញ្ជី ឬវាយបញ្ចូលឈ្មោះក្រសួង/ស្ថាប័ន..." required>
+              <datalist id="ministrySuggestions">
+                <option value="ក្រសួងអប់រំ យុវជន និងកីឡា">
+                <option value="ទីស្តីការគណៈរដ្ឋមន្ត្រី">
+                <option value="ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ">
+                <option value="ក្រសួងមុខងារសាធារណៈ">
+                <option value="ក្រសួងមហាផ្ទៃ">
+                <option value="ក្រសួងការបរទេស និងសហប្រតិបត្តិការអន្តរជាតិ">
+                <option value="ក្រសួងផែនការ">
+                <option value="រដ្ឋបាលរាជធានី-ខេត្ត">
+                <option value="មន្ទីរអប់រំ យុវជន និងកីឡា រាជធានី-ខេត្ត">
+              </datalist>
+            </div>
+          </div>
+
+          <div class="form-row-1">
+            <div class="form-group">
+              <label>សេចក្ដីផ្សេងៗ (កំណត់សម្គាល់បន្ថែម)</label>
+              <input type="text" id="outRemarks" class="form-control" placeholder="កំណត់សម្គាល់បន្ថែម (បើមាន)...">
+            </div>
+          </div>
+
+          <!-- Attachment Section: Upload file or URL Link -->
+          <div class="form-row-1" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <div class="form-group">
+              <label style="color: var(--primary); font-weight: 700;">
+                <i class="fa-solid fa-paperclip"></i> ឯកសារភ្ជាប់ (Upload ឯកសារ ឬ តំណភ្ជាប់ Link)
+              </label>
+              <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                <input type="url" id="outAttachmentLink" class="form-control" placeholder="បិទភ្ជាប់តំណភ្ជាប់ឯកសារ (Google Drive, PDF Link, etc.)...">
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 12px; color: var(--text-muted);">ឬ ជ្រើសរើសឯកសារ Upload៖</span>
+                <input type="file" id="outAttachmentFile" class="form-control" style="padding: 5px; font-size: 12px;" onchange="handleFileUpload(event, 'out')">
+              </div>
+              <input type="hidden" id="outAttachmentData">
+              <div id="outAttachmentPreview" style="display: none;" class="attachment-preview-box">
+                <span id="outAttachmentName" style="color: #0369a1; font-weight: 600;"></span>
+                <button type="button" class="btn btn-outline" style="padding: 2px 6px; font-size: 11px; color: red;" onclick="clearAttachment('out')">
+                  <i class="fa-solid fa-xmark"></i> លុបចេញ
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalOutgoing')">បោះបង់</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> រក្សាទុក</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: ADD / EDIT INCOMING LETTER          -->
+  <!-- ========================================== -->
+  <div class="modal-overlay" id="modalIncoming">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="modalInTitle"><i class="fa-solid fa-inbox"></i> បញ្ចូលសៀវភៅចុះលិខិតចូល</h3>
+        <button class="close-modal-btn" onclick="closeModal('modalIncoming')">&times;</button>
+      </div>
+      <form id="formIncoming" onsubmit="handleIncomingSubmit(event)">
+        <input type="hidden" id="inId">
+        <div class="modal-body">
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>លេខរៀង (ស្វ័យប្រវត្តិ) <span style="color: red;">*</span></label>
+              <input type="number" id="inNo" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label>ចំនួន (ច្បាប់/ឯកសារ) <span style="color: red;">*</span></label>
+              <input type="number" id="inQty" class="form-control" min="1" value="1" required>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>ក្រសួងដើម / ស្ថាប័នដើម <span style="color: red;">*</span></label>
+              <input list="ministrySuggestions" id="inMinistryOrigin" class="form-control" placeholder="ជ្រើសពីបញ្ជី ឬវាយបញ្ចូលក្រសួងដើម..." required>
+            </div>
+            <div class="form-group">
+              <label>លេខលិខិតដើម <span style="color: red;">*</span></label>
+              <input type="text" id="inOrigNo" class="form-control" placeholder="ឧ. ១២៣ អយក.ប្រក" required>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label>ថ្ងៃលិខិតដើម <span style="color: red;">*</span></label>
+              <select id="inDay" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label>ខែលិខិតដើម <span style="color: red;">*</span></label>
+              <select id="inMonth" class="form-control" required></select>
+            </div>
+            <div class="form-group">
+              <label>ឆ្នាំលិខិតដើម <span style="color: red;">*</span></label>
+              <input type="number" id="inYear" class="form-control" value="2026" required>
+            </div>
+          </div>
+
+          <div class="form-row-1">
+            <div class="form-group">
+              <label>ខ្លឹមសារលិខិត <span style="color: red;">*</span></label>
+              <textarea id="inContent" class="form-control" rows="3" placeholder="កត់ត្រាខ្លឹមសារសង្ខេបរបស់លិខិតចូល..." required></textarea>
+            </div>
+          </div>
+
+          <div class="form-row-1">
+            <div class="form-group">
+              <label>សេចក្ដីផ្សេងៗ (កំណត់សម្គាល់បន្ថែម)</label>
+              <input type="text" id="inRemarks" class="form-control" placeholder="កំណត់សម្គាល់បន្ថែម (បើមាន)...">
+            </div>
+          </div>
+
+          <!-- Attachment Section: Upload file or URL Link -->
+          <div class="form-row-1" style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px dashed var(--border-color);">
+            <div class="form-group">
+              <label style="color: var(--primary); font-weight: 700;">
+                <i class="fa-solid fa-paperclip"></i> ឯកសារភ្ជាប់ (Upload ឯកសារ ឬ តំណភ្ជាប់ Link)
+              </label>
+              <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                <input type="url" id="inAttachmentLink" class="form-control" placeholder="បិទភ្ជាប់តំណភ្ជាប់ឯកសារ (Google Drive, PDF Link, etc.)...">
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 12px; color: var(--text-muted);">ឬ ជ្រើសរើសឯកសារ Upload៖</span>
+                <input type="file" id="inAttachmentFile" class="form-control" style="padding: 5px; font-size: 12px;" onchange="handleFileUpload(event, 'in')">
+              </div>
+              <input type="hidden" id="inAttachmentData">
+              <div id="inAttachmentPreview" style="display: none;" class="attachment-preview-box">
+                <span id="inAttachmentName" style="color: #0369a1; font-weight: 600;"></span>
+                <button type="button" class="btn btn-outline" style="padding: 2px 6px; font-size: 11px; color: red;" onclick="clearAttachment('in')">
+                  <i class="fa-solid fa-xmark"></i> លុបចេញ
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalIncoming')">បោះបង់</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> រក្សាទុក</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Logic -->
+  <script>
+    // Khmer Month Mapping
+    const KHMER_MONTHS = {
+      "01": "មករា", "02": "កុម្ភៈ", "03": "មីនា", "04": "មេសា",
+      "05": "ឧសភា", "06": "មិថុនា", "07": "កក្កដា", "08": "សីហា",
+      "09": "កញ្ញា", "10": "តុលា", "11": "វិច្ឆិកា", "12": "ធ្នូ"
+    };
+
+    // State
+    let outgoingLetters = [];
+    let incomingLetters = [];
+    let currentTab = 'dashboard';
+    let dashboardViewMode = 'both'; // 'both' | 'numbers' | 'charts'
+    let monthlyTrendChart = null;
+    let distributionChart = null;
+    let appSettings = {
+      instName: "ក្រសួងអប់រំ យុវជន និងកីឡា",
+      deptName: "ការិយាល័យរដ្ឋបាល និងបុគ្គលិក",
+      address: "រាជធានីភ្នំពេញ ព្រះរាជាណាចក្រកម្ពុជា",
+      contact: "023 210 140 / info@moeys.gov.kh",
+      showHeaderPrint: "yes",
+      defaultPaper: "a4",
+      appsScriptUrl: "",
+      spreadsheetId: "",
+      driveFolderId: ""
+    };
+
+    // Initialize App
+    document.addEventListener("DOMContentLoaded", () => {
+      initDateDropdowns();
+      loadSettings();
+      loadLocalData();
+      renderAll();
+      if (appSettings.appsScriptUrl) {
+        syncWithGoogleSheets();
+      }
+    });
+
+    function initDateDropdowns() {
+      const days = Array.from({length: 31}, (_, i) => String(i + 1).padStart(2, '0'));
+      const months = Object.keys(KHMER_MONTHS);
+
+      const outDay = document.getElementById("outDay");
+      const inDay = document.getElementById("inDay");
+      days.forEach(d => {
+        outDay.innerHTML += `<option value="${d}">${d}</option>`;
+        inDay.innerHTML += `<option value="${d}">${d}</option>`;
+      });
+
+      const outMonth = document.getElementById("outMonth");
+      const inMonth = document.getElementById("inMonth");
+      months.forEach(m => {
+        outMonth.innerHTML += `<option value="${m}">${m} (${KHMER_MONTHS[m]})</option>`;
+        inMonth.innerHTML += `<option value="${m}">${m} (${KHMER_MONTHS[m]})</option>`;
+      });
+
+      // Set today
+      const today = new Date();
+      const curDay = String(today.getDate()).padStart(2, '0');
+      const curMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const curYear = today.getFullYear();
+
+      outDay.value = curDay;
+      inDay.value = curDay;
+      outMonth.value = curMonth;
+      inMonth.value = curMonth;
+      document.getElementById("outYear").value = curYear;
+      document.getElementById("inYear").value = curYear;
+    }
+
+    function switchTab(tabId) {
+      currentTab = tabId;
+      document.querySelectorAll(".tab-pane").forEach(el => el.classList.remove("active"));
+      document.querySelectorAll(".nav-link").forEach(el => el.classList.remove("active"));
+
+      const targetPane = document.getElementById(`tab-${tabId}`);
+      if (targetPane) targetPane.classList.add("active");
+
+      // Update Nav
+      const links = document.querySelectorAll(".nav-link");
+      links.forEach(l => {
+        if (l.getAttribute("onclick")?.includes(tabId)) {
+          l.classList.add("active");
+        }
+      });
+
+      // Update Heading & Quick Add text
+      const heading = document.getElementById("currentPageHeading");
+      const quickAddBtn = document.getElementById("quickAddBtnText");
+
+      if (tabId === 'dashboard') {
+        heading.innerHTML = `<i class="fa-solid fa-chart-pie"></i> <span>ផ្ទាំងគ្រប់គ្រង (Dashboard)</span>`;
+        quickAddBtn.innerText = "ចុះលិខិតចេញថ្មី";
+      } else if (tabId === 'outgoing') {
+        heading.innerHTML = `<i class="fa-solid fa-paper-plane"></i> <span>សៀវភៅចុះលិខិតចេញ</span>`;
+        quickAddBtn.innerText = "ចុះលិខិតចេញថ្មី";
+        renderOutgoingTable();
+      } else if (tabId === 'incoming') {
+        heading.innerHTML = `<i class="fa-solid fa-inbox"></i> <span>សៀវភៅចុះលិខិតចូល</span>`;
+        quickAddBtn.innerText = "ចុះលិខិតចូលថ្មី";
+        renderIncomingTable();
+      } else if (tabId === 'print_preview') {
+        heading.innerHTML = `<i class="fa-solid fa-print"></i> <span>ទម្រង់បោះពុម្ពសៀវភៅផ្លូវការ</span>`;
+        quickAddBtn.innerText = "ចុះលិខិតថ្មី";
+        renderPrintPreview();
+      } else if (tabId === 'settings') {
+        heading.innerHTML = `<i class="fa-solid fa-sliders"></i> <span>ការកំណត់ប្រព័ន្ធ</span>`;
+        quickAddBtn.innerText = "ចុះលិខិតថ្មី";
+      }
+    }
+
+    function openAddModal() {
+      if (currentTab === 'incoming') {
+        openIncomingModal();
+      } else {
+        openOutgoingModal();
+      }
+    }
+
+    // =========================================================================
+    // OUTGOING LETTERS CONTROLLER
+    // =========================================================================
+
+    function openOutgoingModal(editId = null) {
+      const modal = document.getElementById("modalOutgoing");
+      const title = document.getElementById("modalOutTitle");
+      const idField = document.getElementById("outId");
+      const noField = document.getElementById("outNo");
+
+      if (editId) {
+        const item = outgoingLetters.find(x => x.ID == editId || x.id == editId);
+        if (!item) return;
+        title.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> កែប្រែលិខិតចេញ`;
+        idField.value = item.ID || item.id;
+        noField.value = item["លេខរៀង"] || item.no;
+        document.getElementById("outQty").value = item["ចំនួន"] || item.qty || 1;
+        document.getElementById("outDay").value = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+        document.getElementById("outMonth").value = String(item["ខែ"] || item.month).padStart(2, '0');
+        document.getElementById("outYear").value = item["ឆ្នាំ"] || item.year || 2026;
+        document.getElementById("outContent").value = item["ខ្លឹមសារ"] || item.content || '';
+        document.getElementById("outMinistry").value = item["ក្រសួងទទួល"] || item.ministry || '';
+        document.getElementById("outRemarks").value = item["សេចក្ដីផ្សេងៗ"] || item.remarks || '';
+        
+        // Handle Attachment
+        const attachLink = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+        document.getElementById("outAttachmentLink").value = attachLink.startsWith("data:") ? "" : attachLink;
+        document.getElementById("outAttachmentData").value = attachLink;
+        if (attachLink) {
+          document.getElementById("outAttachmentPreview").style.display = "flex";
+          document.getElementById("outAttachmentName").innerText = attachLink.startsWith("data:") ? "ឯកសារដែលបាន Upload រួចរាល់" : attachLink;
+        } else {
+          document.getElementById("outAttachmentPreview").style.display = "none";
+          document.getElementById("outAttachmentName").innerText = "";
+        }
+        document.getElementById("outAttachmentFile").value = "";
+      } else {
+        title.innerHTML = `<i class="fa-solid fa-paper-plane"></i> បញ្ចូលសៀវភៅចុះលិខិតចេញ`;
+        idField.value = "";
+        // Auto increment number
+        const nextNo = getNextNo(outgoingLetters);
+        noField.value = nextNo;
+        document.getElementById("outQty").value = 1;
+        document.getElementById("outContent").value = "";
+        document.getElementById("outMinistry").value = "";
+        document.getElementById("outRemarks").value = "";
+        document.getElementById("outAttachmentLink").value = "";
+        document.getElementById("outAttachmentData").value = "";
+        document.getElementById("outAttachmentFile").value = "";
+        document.getElementById("outAttachmentPreview").style.display = "none";
+      }
+
+      modal.classList.add("active");
+    }
+
+    async function handleOutgoingSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById("outId").value || ("OUT_" + Date.now());
+      const no = parseInt(document.getElementById("outNo").value, 10);
+      const qty = parseInt(document.getElementById("outQty").value, 10) || 1;
+      const day = String(document.getElementById("outDay").value).padStart(2, '0');
+      const month = String(document.getElementById("outMonth").value).padStart(2, '0');
+      const year = document.getElementById("outYear").value;
+      const content = document.getElementById("outContent").value.trim();
+      const ministry = document.getElementById("outMinistry").value.trim();
+      const remarks = document.getElementById("outRemarks").value.trim();
+      const attachmentLink = document.getElementById("outAttachmentLink").value.trim();
+      const attachmentData = document.getElementById("outAttachmentData").value;
+      const finalAttachment = attachmentData || attachmentLink || "";
+
+      // Check unique number within outgoing list (excluding this item)
+      const isDuplicate = outgoingLetters.some(item => {
+        const itemNo = parseInt(item["លេខរៀង"] || item.no, 10);
+        const itemId = item.ID || item.id;
+        return itemNo === no && itemId !== id;
+      });
+
+      if (isDuplicate) {
+        alert(`លេខរៀង ${no} ត្រូវបានប្រើប្រាស់រួចហើយ! សូមជ្រើសរើសលេខរៀងផ្សេងដើម្បីកុំឱ្យស្ទួន។`);
+        return;
+      }
+
+      const record = {
+        ID: id,
+        "លេខរៀង": no,
+        "ខ្លឹមសារ": content,
+        "ថ្ងៃ": day,
+        "ខែ": month,
+        "ឆ្នាំ": year,
+        "ចំនួន": qty,
+        "ក្រសួងទទួល": ministry,
+        "សេចក្ដីផ្សេងៗ": remarks,
+        "ឯកសារភ្ជាប់": finalAttachment,
+        CreatedAt: new Date().toISOString()
+      };
+
+      const existingIndex = outgoingLetters.findIndex(x => (x.ID || x.id) === id);
+      if (existingIndex >= 0) {
+        outgoingLetters[existingIndex] = record;
+        showToast("កែប្រែលិខិតចេញបានជោគជ័យ!", "success");
+      } else {
+        outgoingLetters.push(record);
+        showToast("បានចុះលិខិតចេញថ្មីដោយជោគជ័យ!", "success");
+      }
+
+      // Sort by No ascending
+      sortRecords(outgoingLetters);
+      saveLocalData();
+      closeModal('modalOutgoing');
+      renderAll();
+
+      // Sync to Google Sheets if configured
+      if (appSettings.appsScriptUrl) {
+        sendToGoogleSheets("saveOutgoing", record);
+      }
+    }
+
+    function deleteOutgoing(id) {
+      if (!confirm("តើអ្នកប្រាកដជាចង់លុបកំណត់ត្រាលិខិតចេញនេះមែនទេ?")) return;
+      outgoingLetters = outgoingLetters.filter(x => (x.ID || x.id) !== id);
+      saveLocalData();
+      renderAll();
+      showToast("បានលុបកំណត់ត្រារួចរាល់", "success");
+
+      if (appSettings.appsScriptUrl) {
+        sendToGoogleSheets("deleteOutgoing", { id });
+      }
+    }
+
+    // =========================================================================
+    // INCOMING LETTERS CONTROLLER
+    // =========================================================================
+
+    function openIncomingModal(editId = null) {
+      const modal = document.getElementById("modalIncoming");
+      const title = document.getElementById("modalInTitle");
+      const idField = document.getElementById("inId");
+      const noField = document.getElementById("inNo");
+
+      if (editId) {
+        const item = incomingLetters.find(x => x.ID == editId || x.id == editId);
+        if (!item) return;
+        title.innerHTML = `<i class="fa-solid fa-pen-to-square"></i> កែប្រែលិខិតចូល`;
+        idField.value = item.ID || item.id;
+        noField.value = item["លេខរៀង"] || item.no;
+        document.getElementById("inQty").value = item["ចំនួន"] || item.qty || 1;
+        document.getElementById("inMinistryOrigin").value = item["ក្រសួងដើម"] || item.ministry_origin || '';
+        document.getElementById("inOrigNo").value = item["លេខលិខិតដើម"] || item.orig_no || '';
+        document.getElementById("inDay").value = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+        document.getElementById("inMonth").value = String(item["ខែ"] || item.month).padStart(2, '0');
+        document.getElementById("inYear").value = item["ឆ្នាំ"] || item.year || 2026;
+        document.getElementById("inContent").value = item["ខ្លឹមសារ"] || item.content || '';
+        document.getElementById("inRemarks").value = item["សេចក្ដីផ្សេងៗ"] || item.remarks || '';
+
+        // Handle Attachment
+        const attachLink = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+        document.getElementById("inAttachmentLink").value = attachLink.startsWith("data:") ? "" : attachLink;
+        document.getElementById("inAttachmentData").value = attachLink;
+        if (attachLink) {
+          document.getElementById("inAttachmentPreview").style.display = "flex";
+          document.getElementById("inAttachmentName").innerText = attachLink.startsWith("data:") ? "ឯកសារដែលបាន Upload រួចរាល់" : attachLink;
+        } else {
+          document.getElementById("inAttachmentPreview").style.display = "none";
+          document.getElementById("inAttachmentName").innerText = "";
+        }
+        document.getElementById("inAttachmentFile").value = "";
+      } else {
+        title.innerHTML = `<i class="fa-solid fa-inbox"></i> បញ្ចូលសៀវភៅចុះលិខិតចូល`;
+        idField.value = "";
+        const nextNo = getNextNo(incomingLetters);
+        noField.value = nextNo;
+        document.getElementById("inQty").value = 1;
+        document.getElementById("inMinistryOrigin").value = "";
+        document.getElementById("inOrigNo").value = "";
+        document.getElementById("inContent").value = "";
+        document.getElementById("inRemarks").value = "";
+        document.getElementById("inAttachmentLink").value = "";
+        document.getElementById("inAttachmentData").value = "";
+        document.getElementById("inAttachmentFile").value = "";
+        document.getElementById("inAttachmentPreview").style.display = "none";
+      }
+
+      modal.classList.add("active");
+    }
+
+    async function handleIncomingSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById("inId").value || ("IN_" + Date.now());
+      const no = parseInt(document.getElementById("inNo").value, 10);
+      const qty = parseInt(document.getElementById("inQty").value, 10) || 1;
+      const ministryOrigin = document.getElementById("inMinistryOrigin").value.trim();
+      const origNo = document.getElementById("inOrigNo").value.trim();
+      const day = String(document.getElementById("inDay").value).padStart(2, '0');
+      const month = String(document.getElementById("inMonth").value).padStart(2, '0');
+      const year = document.getElementById("inYear").value;
+      const content = document.getElementById("inContent").value.trim();
+      const remarks = document.getElementById("inRemarks").value.trim();
+      const attachmentLink = document.getElementById("inAttachmentLink").value.trim();
+      const attachmentData = document.getElementById("inAttachmentData").value;
+      const finalAttachment = attachmentData || attachmentLink || "";
+
+      // Check unique number within incoming list
+      const isDuplicate = incomingLetters.some(item => {
+        const itemNo = parseInt(item["លេខរៀង"] || item.no, 10);
+        const itemId = item.ID || item.id;
+        return itemNo === no && itemId !== id;
+      });
+
+      if (isDuplicate) {
+        alert(`លេខរៀង ${no} ត្រូវបានប្រើប្រាស់រួចហើយក្នុងសៀវភៅលិខិតចូល! សូមជ្រើសរើសលេខរៀងផ្សេងដើម្បីកុំឱ្យស្ទួន។`);
+        return;
+      }
+
+      const record = {
+        ID: id,
+        "លេខរៀង": no,
+        "ខ្លឹមសារ": content,
+        "ក្រសួងដើម": ministryOrigin,
+        "ចំនួន": qty,
+        "លេខលិខិតដើម": origNo,
+        "ថ្ងៃ": day,
+        "ខែ": month,
+        "ឆ្នាំ": year,
+        "សេចក្ដីផ្សេងៗ": remarks,
+        "ឯកសារភ្ជាប់": finalAttachment,
+        CreatedAt: new Date().toISOString()
+      };
+
+      const existingIndex = incomingLetters.findIndex(x => (x.ID || x.id) === id);
+      if (existingIndex >= 0) {
+        incomingLetters[existingIndex] = record;
+        showToast("កែប្រែលិខិតចូលបានជោគជ័យ!", "success");
+      } else {
+        incomingLetters.push(record);
+        showToast("បានចុះលិខិតចូលថ្មីដោយជោគជ័យ!", "success");
+      }
+
+      sortRecords(incomingLetters);
+      saveLocalData();
+      closeModal('modalIncoming');
+      renderAll();
+
+      if (appSettings.appsScriptUrl) {
+        sendToGoogleSheets("saveIncoming", record);
+      }
+    }
+
+    function deleteIncoming(id) {
+      if (!confirm("តើអ្នកប្រាកដជាចង់លុបកំណត់ត្រាលិខិតចូលនេះមែនទេ?")) return;
+      incomingLetters = incomingLetters.filter(x => (x.ID || x.id) !== id);
+      saveLocalData();
+      renderAll();
+      showToast("បានលុបកំណត់ត្រារួចរាល់", "success");
+
+      if (appSettings.appsScriptUrl) {
+        sendToGoogleSheets("deleteIncoming", { id });
+      }
+    }
+
+    // =========================================================================
+    // RENDERING & FILTERING CONTROLLER
+    // =========================================================================
+
+    function renderAll() {
+      renderDashboard();
+      updateYearDropdowns();
+      renderOutgoingTable();
+      renderIncomingTable();
+    }
+
+    function renderDashboard() {
+      // 1. Update Numbers View
+      document.getElementById("dashTotalOutgoing").innerText = outgoingLetters.length;
+      document.getElementById("dashTotalIncoming").innerText = incomingLetters.length;
+
+      const currentMonthStr = String(new Date().getMonth() + 1).padStart(2, '0');
+      const currentYearStr = String(new Date().getFullYear());
+
+      const curMonthOut = outgoingLetters.filter(x => (x["ខែ"] || x.month) == currentMonthStr && (x["ឆ្នាំ"] || x.year) == currentYearStr).length;
+      const curMonthIn = incomingLetters.filter(x => (x["ខែ"] || x.month) == currentMonthStr && (x["ឆ្នាំ"] || x.year) == currentYearStr).length;
+
+      document.getElementById("dashMonthlyOutgoing").innerText = curMonthOut;
+      document.getElementById("dashMonthlyIncoming").innerText = curMonthIn;
+
+      // 2. Render / Update Charts
+      updateDashboardCharts();
+
+      // Recent Outgoing table
+      const recentOut = [...outgoingLetters].reverse().slice(0, 5);
+      const outBody = document.getElementById("dashRecentOutgoingBody");
+      outBody.innerHTML = recentOut.map(item => `
+        <tr>
+          <td style="font-weight: bold; color: var(--primary);">${item["លេខរៀង"] || item.no}</td>
+          <td>${escapeHtml(item["ខ្លឹមសារ"] || item.content)}</td>
+          <td><span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 12px;">${escapeHtml(item["ក្រសួងទទួល"] || item.ministry)}</span></td>
+          <td>${item["ថ្ងៃ"] || item.day}/${item["ខែ"] || item.month}/${item["ឆ្នាំ"] || item.year}</td>
+        </tr>
+      `).join('') || `<tr><td colspan="4" style="text-align:center; color: #94a3b8;">មិនទាន់មានទិន្នន័យ</td></tr>`;
+
+      // Recent Incoming table
+      const recentIn = [...incomingLetters].reverse().slice(0, 5);
+      const inBody = document.getElementById("dashRecentIncomingBody");
+      inBody.innerHTML = recentIn.map(item => `
+        <tr>
+          <td style="font-weight: bold; color: #0284c7;">${item["លេខរៀង"] || item.no}</td>
+          <td>${escapeHtml(item["ខ្លឹមសារ"] || item.content)}</td>
+          <td><span style="background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 12px;">${escapeHtml(item["ក្រសួងដើម"] || item.ministry_origin)}</span></td>
+          <td>${escapeHtml(item["លេខលិខិតដើម"] || item.orig_no)}</td>
+        </tr>
+      `).join('') || `<tr><td colspan="4" style="text-align:center; color: #94a3b8;">មិនទាន់មានទិន្នន័យ</td></tr>`;
+    }
+
+    // Toggle Dashboard View Mode: 'both' | 'numbers' | 'charts'
+    function setDashboardViewMode(mode) {
+      dashboardViewMode = mode;
+      
+      const numbersEl = document.getElementById("dashboardNumbersContainer");
+      const chartsEl = document.getElementById("dashboardChartsContainer");
+
+      // Update button active state
+      document.getElementById("btnViewBoth").classList.remove("active");
+      document.getElementById("btnViewNumbers").classList.remove("active");
+      document.getElementById("btnViewCharts").classList.remove("active");
+
+      if (mode === 'both') {
+        document.getElementById("btnViewBoth").classList.add("active");
+        numbersEl.style.display = "grid";
+        chartsEl.style.display = "grid";
+      } else if (mode === 'numbers') {
+        document.getElementById("btnViewNumbers").classList.add("active");
+        numbersEl.style.display = "grid";
+        chartsEl.style.display = "none";
+      } else if (mode === 'charts') {
+        document.getElementById("btnViewCharts").classList.add("active");
+        numbersEl.style.display = "none";
+        chartsEl.style.display = "grid";
+      }
+
+      if (mode !== 'numbers') {
+        updateDashboardCharts();
+      }
+    }
+
+    // Render / Refresh Dashboard Charts
+    function updateDashboardCharts() {
+      // Ensure Chart.js is loaded
+      if (typeof Chart === 'undefined') return;
+
+      const yearSelect = document.getElementById("dashChartYearSelect");
+      const selectedYear = yearSelect?.value || String(new Date().getFullYear());
+      const badge = document.getElementById("chartYearBadge");
+      if (badge) badge.innerText = `ឆ្នាំ ${selectedYear}`;
+
+      // Calculate monthly counts for selected year (1 to 12)
+      const monthlyOut = Array(12).fill(0);
+      const monthlyIn = Array(12).fill(0);
+
+      outgoingLetters.forEach(item => {
+        const itemYear = String(item["ឆ្នាំ"] || item.year);
+        if (itemYear === selectedYear) {
+          const m = parseInt(item["ខែ"] || item.month, 10);
+          if (m >= 1 && m <= 12) {
+            monthlyOut[m - 1]++;
+          }
+        }
+      });
+
+      incomingLetters.forEach(item => {
+        const itemYear = String(item["ឆ្នាំ"] || item.year);
+        if (itemYear === selectedYear) {
+          const m = parseInt(item["ខែ"] || item.month, 10);
+          if (m >= 1 && m <= 12) {
+            monthlyIn[m - 1]++;
+          }
+        }
+      });
+
+      const monthLabels = ["មករា", "កុម្ភៈ", "មីនា", "មេសា", "ឧសភា", "មិថុនា", "កក្កដា", "សីហា", "កញ្ញា", "តុលា", "វិច្ឆិកា", "ធ្នូ"];
+
+      // 1. Monthly Trend Bar/Line Chart
+      const trendCtx = document.getElementById("monthlyTrendChartCanvas");
+      if (trendCtx) {
+        if (monthlyTrendChart) {
+          monthlyTrendChart.destroy();
+        }
+
+        monthlyTrendChart = new Chart(trendCtx, {
+          type: 'bar',
+          data: {
+            labels: monthLabels,
+            datasets: [
+              {
+                label: 'លិខិតចេញ (Outgoing)',
+                data: monthlyOut,
+                backgroundColor: 'rgba(5, 150, 105, 0.75)',
+                borderColor: '#059669',
+                borderWidth: 1.5,
+                borderRadius: 5,
+              },
+              {
+                label: 'លិខិតចូល (Incoming)',
+                data: monthlyIn,
+                backgroundColor: 'rgba(2, 132, 199, 0.75)',
+                borderColor: '#0284c7',
+                borderWidth: 1.5,
+                borderRadius: 5,
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  font: { family: "'Kantumruy Pro', 'Siemreap', sans-serif", size: 12 }
+                }
+              },
+              tooltip: {
+                titleFont: { family: "'Kantumruy Pro', 'Siemreap', sans-serif" },
+                bodyFont: { family: "'Kantumruy Pro', 'Siemreap', sans-serif" }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  stepSize: 1,
+                  font: { family: "'Kantumruy Pro', sans-serif" }
+                },
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              x: {
+                ticks: {
+                  font: { family: "'Kantumruy Pro', 'Siemreap', sans-serif" }
+                },
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Total Ratio Doughnut Chart
+      const distCtx = document.getElementById("distributionChartCanvas");
+      if (distCtx) {
+        if (distributionChart) {
+          distributionChart.destroy();
+        }
+
+        const totalOut = outgoingLetters.length;
+        const totalIn = incomingLetters.length;
+        const hasData = (totalOut + totalIn) > 0;
+
+        distributionChart = new Chart(distCtx, {
+          type: 'doughnut',
+          data: {
+            labels: ['លិខិតចេញ', 'លិខិតចូល'],
+            datasets: [{
+              data: hasData ? [totalOut, totalIn] : [1, 0],
+              backgroundColor: hasData ? ['#059669', '#0284c7'] : ['#e2e8f0', '#cbd5e1'],
+              borderWidth: 2,
+              borderColor: '#ffffff',
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '68%',
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  font: { family: "'Kantumruy Pro', 'Siemreap', sans-serif", size: 12 },
+                  padding: 16
+                }
+              },
+              tooltip: {
+                enabled: hasData,
+                callbacks: {
+                  label: function(context) {
+                    const label = context.label || '';
+                    const val = context.raw || 0;
+                    const total = totalOut + totalIn;
+                    const percent = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                    return ` ${label}: ${val} (${percent}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function updateYearDropdowns() {
+      const allYears = new Set();
+      outgoingLetters.forEach(x => allYears.add(x["ឆ្នាំ"] || x.year));
+      incomingLetters.forEach(x => allYears.add(x["ឆ្នាំ"] || x.year));
+      allYears.add("2026");
+
+      const sortedYears = Array.from(allYears).filter(Boolean).sort().reverse();
+
+      const outYearSelect = document.getElementById("outFilterYear");
+      const inYearSelect = document.getElementById("inFilterYear");
+      const dashChartYearSelect = document.getElementById("dashChartYearSelect");
+
+      const currentOut = outYearSelect.value;
+      const currentIn = inYearSelect.value;
+      const currentDashChart = dashChartYearSelect ? dashChartYearSelect.value : "";
+
+      let html = `<option value="">ទាំងអស់</option>`;
+      sortedYears.forEach(y => html += `<option value="${y}">ឆ្នាំ ${y}</option>`);
+
+      outYearSelect.innerHTML = html;
+      inYearSelect.innerHTML = html;
+
+      outYearSelect.value = currentOut;
+      inYearSelect.value = currentIn;
+
+      if (dashChartYearSelect) {
+        let chartYearsHtml = "";
+        sortedYears.forEach(y => chartYearsHtml += `<option value="${y}">ឆ្នាំ ${y}</option>`);
+        dashChartYearSelect.innerHTML = chartYearsHtml;
+        if (currentDashChart && sortedYears.includes(currentDashChart)) {
+          dashChartYearSelect.value = currentDashChart;
+        } else if (sortedYears.includes("2026")) {
+          dashChartYearSelect.value = "2026";
+        }
+      }
+    }
+
+    // Filter Outgoing
+    function getFilteredOutgoing() {
+      const search = document.getElementById("outFilterSearch")?.value.toLowerCase().trim() || "";
+      const year = document.getElementById("outFilterYear")?.value || "";
+      const month = document.getElementById("outFilterMonth")?.value || "";
+      const fromNo = parseInt(document.getElementById("outFilterFromNo")?.value, 10);
+      const toNo = parseInt(document.getElementById("outFilterToNo")?.value, 10);
+
+      return outgoingLetters.filter(item => {
+        const no = parseInt(item["លេខរៀង"] || item.no, 10);
+        const itemYear = String(item["ឆ្នាំ"] || item.year);
+        const itemMonth = String(item["ខែ"] || item.month).padStart(2, '0');
+        const content = (item["ខ្លឹមសារ"] || item.content || "").toLowerCase();
+        const ministry = (item["ក្រសួងទទួល"] || item.ministry || "").toLowerCase();
+
+        if (search && !content.includes(search) && !ministry.includes(search)) return false;
+        if (year && itemYear !== year) return false;
+        if (month && itemMonth !== month) return false;
+        if (!isNaN(fromNo) && no < fromNo) return false;
+        if (!isNaN(toNo) && no > toNo) return false;
+
+        return true;
+      });
+    }
+
+    function renderOutgoingTable() {
+      const filtered = getFilteredOutgoing();
+      const tbody = document.getElementById("outgoingTableBody");
+
+      // Calculate Header Stats for Outgoing Book
+      calculateAndRenderBookHeader('out', filtered);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #94a3b8;">គ្មានទិន្នន័យត្រូវបង្ហាញ</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const id = item.ID || item.id;
+        const no = item["លេខរៀង"] || item.no;
+        const content = escapeHtml(item["ខ្លឹមសារ"] || item.content || '');
+        const day = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+        const month = String(item["ខែ"] || item.month).padStart(2, '0');
+        const monthName = KHMER_MONTHS[month] || month;
+        const year = item["ឆ្នាំ"] || item.year;
+        const dateFormatted = `ថ្ងៃទី ${day} ខែ ${monthName} ឆ្នាំ ${year}`;
+        const qty = item["ចំនួន"] || item.qty || 1;
+        const ministry = escapeHtml(item["ក្រសួងទទួល"] || item.ministry || '');
+        const remarks = escapeHtml(item["សេចក្ដីផ្សេងៗ"] || item.remarks || '');
+        const attach = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+        let attachHtml = "";
+        if (attach) {
+          if (attach.startsWith("data:")) {
+            attachHtml = `<div><a href="${attach}" download="document_out_${no}" class="attachment-badge"><i class="fa-solid fa-file-arrow-down"></i> ទាញយកឯកសារ</a></div>`;
+          } else {
+            attachHtml = `<div><a href="${attach}" target="_blank" rel="noopener noreferrer" class="attachment-badge"><i class="fa-solid fa-arrow-up-right-from-square"></i> មើលឯកសារភ្ជាប់</a></div>`;
+          }
+        }
+
+        return `
+          <tr>
+            <td class="col-no">${no}</td>
+            <td class="col-content">
+              <div class="content-cell-title">${content}</div>
+              <div class="content-cell-date">${dateFormatted}</div>
+            </td>
+            <td class="col-qty">${qty}</td>
+            <td class="col-ministry">${ministry}</td>
+            <td class="col-remarks">${remarks ? `<div>${remarks}</div>` : ''}${attachHtml}</td>
+            <td class="no-print" style="text-align: center;">
+              <button class="btn btn-outline btn-icon" title="កែប្រែ" onclick="openOutgoingModal('${id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger btn-icon" title="លុប" onclick="deleteOutgoing('${id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Filter Incoming
+    function getFilteredIncoming() {
+      const search = document.getElementById("inFilterSearch")?.value.toLowerCase().trim() || "";
+      const year = document.getElementById("inFilterYear")?.value || "";
+      const month = document.getElementById("inFilterMonth")?.value || "";
+      const fromNo = parseInt(document.getElementById("inFilterFromNo")?.value, 10);
+      const toNo = parseInt(document.getElementById("inFilterToNo")?.value, 10);
+
+      return incomingLetters.filter(item => {
+        const no = parseInt(item["លេខរៀង"] || item.no, 10);
+        const itemYear = String(item["ឆ្នាំ"] || item.year);
+        const itemMonth = String(item["ខែ"] || item.month).padStart(2, '0');
+        const content = (item["ខ្លឹមសារ"] || item.content || "").toLowerCase();
+        const ministryOrigin = (item["ក្រសួងដើម"] || item.ministry_origin || "").toLowerCase();
+        const origNo = (item["លេខលិខិតដើម"] || item.orig_no || "").toLowerCase();
+
+        if (search && !content.includes(search) && !ministryOrigin.includes(search) && !origNo.includes(search)) return false;
+        if (year && itemYear !== year) return false;
+        if (month && itemMonth !== month) return false;
+        if (!isNaN(fromNo) && no < fromNo) return false;
+        if (!isNaN(toNo) && no > toNo) return false;
+
+        return true;
+      });
+    }
+
+    function renderIncomingTable() {
+      const filtered = getFilteredIncoming();
+      const tbody = document.getElementById("incomingTableBody");
+
+      calculateAndRenderBookHeader('in', filtered);
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #94a3b8;">គ្មានទិន្នន័យត្រូវបង្ហាញ</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(item => {
+        const id = item.ID || item.id;
+        const no = item["លេខរៀង"] || item.no;
+        const content = escapeHtml(item["ខ្លឹមសារ"] || item.content || '');
+        const ministryOrigin = escapeHtml(item["ក្រសួងដើម"] || item.ministry_origin || '');
+        const qty = item["ចំនួន"] || item.qty || 1;
+        const origNo = escapeHtml(item["លេខលិខិតដើម"] || item.orig_no || '');
+        const day = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+        const month = String(item["ខែ"] || item.month).padStart(2, '0');
+        const monthName = KHMER_MONTHS[month] || month;
+        const year = item["ឆ្នាំ"] || item.year;
+        const origDateFormatted = `ថ្ងៃទី ${day} ខែ ${monthName} ឆ្នាំ ${year}`;
+        const remarks = escapeHtml(item["សេចក្ដីផ្សេងៗ"] || item.remarks || '');
+        const attach = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+        let attachHtml = "";
+        if (attach) {
+          if (attach.startsWith("data:")) {
+            attachHtml = `<div><a href="${attach}" download="document_in_${no}" class="attachment-badge"><i class="fa-solid fa-file-arrow-down"></i> ទាញយកឯកសារ</a></div>`;
+          } else {
+            attachHtml = `<div><a href="${attach}" target="_blank" rel="noopener noreferrer" class="attachment-badge"><i class="fa-solid fa-arrow-up-right-from-square"></i> មើលឯកសារភ្ជាប់</a></div>`;
+          }
+        }
+
+        return `
+          <tr>
+            <td class="col-no">${no}</td>
+            <td class="col-content">
+              <div class="content-cell-title">${content}</div>
+              <div class="content-cell-date" style="color: #0369a1; font-weight: 500;">(មកពី៖ ${ministryOrigin})</div>
+            </td>
+            <td class="col-qty">${qty}</td>
+            <td class="col-orig-no">
+              <div style="font-weight: 600;">${origNo}</div>
+              <div class="content-cell-date">${origDateFormatted}</div>
+            </td>
+            <td class="col-remarks">${remarks ? `<div>${remarks}</div>` : ''}${attachHtml}</td>
+            <td class="no-print" style="text-align: center;">
+              <button class="btn btn-outline btn-icon" title="កែប្រែ" onclick="openIncomingModal('${id}')"><i class="fa-solid fa-pen"></i></button>
+              <button class="btn btn-danger btn-icon" title="លុប" onclick="deleteIncoming('${id}')"><i class="fa-solid fa-trash"></i></button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // SECTION 5: AUTOMATIC CALCULATION OF BOOK HEADER
+    // "លេខ........ ដល់លេខ........ សរុប........"
+    // "ថ្ងៃទី........ ខែ........ ឆ្នាំ........ ដល់ ថ្ងៃទី........ ខែ........ ឆ្នាំ........"
+    // =========================================================================
+    function calculateAndRenderBookHeader(prefix, records) {
+      const rangeEl = document.getElementById(`${prefix}CalcNoRange`);
+      const totalEl = document.getElementById(`${prefix}CalcTotal`);
+      const dateEl = document.getElementById(`${prefix}CalcDateRange`);
+      const instHeadingEl = document.getElementById(`${prefix}InstHeading`);
+
+      if (appSettings.showHeaderPrint === 'yes') {
+        instHeadingEl.innerHTML = `<div>${appSettings.instName}</div><div style="font-size: 11.5px; opacity: 0.9;">${appSettings.deptName}</div>`;
+      } else {
+        instHeadingEl.innerHTML = "";
+      }
+
+      if (!records || records.length === 0) {
+        rangeEl.innerText = "........... ដល់លេខ ...........";
+        totalEl.innerText = "0";
+        dateEl.innerText = ".............. ខែ ................. ឆ្នាំ ............. ដល់ ថ្ងៃទី ............. ខែ ................ ឆ្នាំ ........................";
+        return;
+      }
+
+      // 1. Calculate No Range & Total
+      const numbers = records.map(r => parseInt(r["លេខរៀង"] || r.no, 10)).filter(n => !isNaN(n));
+      const minNo = Math.min(...numbers);
+      const maxNo = Math.max(...numbers);
+      const totalCount = records.length;
+
+      rangeEl.innerText = `${minNo} ដល់លេខ ${maxNo}`;
+      totalEl.innerText = `${totalCount}`;
+
+      // 2. Calculate Date Range (Earliest to Latest record date)
+      const sortedByDate = [...records].sort((a, b) => {
+        const da = new Date(parseInt(a["ឆ្នាំ"] || a.year, 10), parseInt(a["ខែ"] || a.month, 10) - 1, parseInt(a["ថ្ងៃ"] || a.day, 10));
+        const db = new Date(parseInt(b["ឆ្នាំ"] || b.year, 10), parseInt(b["ខែ"] || b.month, 10) - 1, parseInt(b["ថ្ងៃ"] || b.day, 10));
+        return da - db;
+      });
+
+      const firstRec = sortedByDate[0];
+      const lastRec = sortedByDate[sortedByDate.length - 1];
+
+      const fDay = String(firstRec["ថ្ងៃ"] || firstRec.day).padStart(2, '0');
+      const fMonth = String(firstRec["ខែ"] || firstRec.month).padStart(2, '0');
+      const fMonthName = KHMER_MONTHS[fMonth] || fMonth;
+      const fYear = firstRec["ឆ្នាំ"] || firstRec.year;
+
+      const lDay = String(lastRec["ថ្ងៃ"] || lastRec.day).padStart(2, '0');
+      const lMonth = String(lastRec["ខែ"] || lastRec.month).padStart(2, '0');
+      const lMonthName = KHMER_MONTHS[lMonth] || lMonth;
+      const lYear = lastRec["ឆ្នាំ"] || lastRec.year;
+
+      dateEl.innerText = `${fDay} ខែ ${fMonthName} ឆ្នាំ ${fYear} ដល់ ថ្ងៃទី ${lDay} ខែ ${lMonthName} ឆ្នាំ ${lYear}`;
+    }
+
+    function resetOutgoingFilter() {
+      document.getElementById("outFilterSearch").value = "";
+      document.getElementById("outFilterYear").value = "";
+      document.getElementById("outFilterMonth").value = "";
+      document.getElementById("outFilterFromNo").value = "";
+      document.getElementById("outFilterToNo").value = "";
+      renderOutgoingTable();
+    }
+
+    function resetIncomingFilter() {
+      document.getElementById("inFilterSearch").value = "";
+      document.getElementById("inFilterYear").value = "";
+      document.getElementById("inFilterMonth").value = "";
+      document.getElementById("inFilterFromNo").value = "";
+      document.getElementById("inFilterToNo").value = "";
+      renderIncomingTable();
+    }
+
+    // =========================================================================
+    // SECTION 6 & 7: PRINT PREVIEW & EXACT OFFICIAL FORMAT
+    // =========================================================================
+
+    function goToPrint(bookType) {
+      document.getElementById("printBookSelector").value = bookType;
+      switchTab('print_preview');
+    }
+
+    function renderPrintPreview() {
+      const bookType = document.getElementById("printBookSelector").value;
+      const container = document.getElementById("printOutputContainer");
+
+      if (bookType === 'outgoing') {
+        const filtered = getFilteredOutgoing();
+        container.innerHTML = generatePrintBookHTML({
+          type: 'outgoing',
+          title: 'សៀវភៅចុះលិខិតចេញ',
+          records: filtered
+        });
+      } else {
+        const filtered = getFilteredIncoming();
+        container.innerHTML = generatePrintBookHTML({
+          type: 'incoming',
+          title: 'សៀវភៅចុះលិខិតចូល',
+          records: filtered
+        });
+      }
+    }
+
+    function generatePrintBookHTML({ type, title, records }) {
+      let instMeta = "";
+      if (appSettings.showHeaderPrint === 'yes') {
+        instMeta = `<div style="font-size: 13px; color: #334155; margin-bottom: 6px;">${escapeHtml(appSettings.instName)}<br><span style="font-size: 11px;">${escapeHtml(appSettings.deptName)}</span></div>`;
+      }
+
+      let noRangeText = "........... ដល់លេខ ...........";
+      let totalText = "0";
+      let dateRangeText = ".............. ខែ ................. ឆ្នាំ ............. ដល់ ថ្ងៃទី ............. ខែ ................ ឆ្នាំ ........................";
+
+      if (records && records.length > 0) {
+        const numbers = records.map(r => parseInt(r["លេខរៀង"] || r.no, 10)).filter(n => !isNaN(n));
+        const minNo = Math.min(...numbers);
+        const maxNo = Math.max(...numbers);
+        noRangeText = `${minNo} ដល់លេខ ${maxNo}`;
+        totalText = `${records.length}`;
+
+        const sortedByDate = [...records].sort((a, b) => {
+          const da = new Date(parseInt(a["ឆ្នាំ"] || a.year, 10), parseInt(a["ខែ"] || a.month, 10) - 1, parseInt(a["ថ្ងៃ"] || a.day, 10));
+          const db = new Date(parseInt(b["ឆ្នាំ"] || b.year, 10), parseInt(b["ខែ"] || b.month, 10) - 1, parseInt(b["ថ្ងៃ"] || b.day, 10));
+          return da - db;
+        });
+
+        const f = sortedByDate[0];
+        const l = sortedByDate[sortedByDate.length - 1];
+
+        const fDay = String(f["ថ្ងៃ"] || f.day).padStart(2, '0');
+        const fMonth = String(f["ខែ"] || f.month).padStart(2, '0');
+        const fMonthName = KHMER_MONTHS[fMonth] || fMonth;
+        const fYear = f["ឆ្នាំ"] || f.year;
+
+        const lDay = String(l["ថ្ងៃ"] || l.day).padStart(2, '0');
+        const lMonth = String(l["ខែ"] || l.month).padStart(2, '0');
+        const lMonthName = KHMER_MONTHS[lMonth] || lMonth;
+        const lYear = l["ឆ្នាំ"] || l.year;
+
+        dateRangeText = `${fDay} ខែ ${fMonthName} ឆ្នាំ ${fYear} ដល់ ថ្ងៃទី ${lDay} ខែ ${lMonthName} ឆ្នាំ ${lYear}`;
+      }
+
+      let tableRows = "";
+      if (records.length === 0) {
+        tableRows = `<tr><td colspan="5" style="text-align:center; padding: 20px;">គ្មានទិន្នន័យ</td></tr>`;
+      } else if (type === 'outgoing') {
+        tableRows = records.map(item => {
+          const no = item["លេខរៀង"] || item.no;
+          const content = escapeHtml(item["ខ្លឹមសារ"] || item.content || '');
+          const day = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+          const month = String(item["ខែ"] || item.month).padStart(2, '0');
+          const monthName = KHMER_MONTHS[month] || month;
+          const year = item["ឆ្នាំ"] || item.year;
+          const dateFormatted = `ថ្ងៃទី ${day} ខែ ${monthName} ឆ្នាំ ${year}`;
+          const qty = item["ចំនួន"] || item.qty || 1;
+          const ministry = escapeHtml(item["ក្រសួងទទួល"] || item.ministry || '');
+          const remarks = escapeHtml(item["សេចក្ដីផ្សេងៗ"] || item.remarks || '');
+          const attach = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+          let attachPrint = "";
+          if (attach) {
+            if (attach.startsWith("data:")) {
+              attachPrint = `<div style="font-size: 9pt; color: #475569; margin-top: 3px;">[មានឯកសារភ្ជាប់]</div>`;
+            } else {
+              attachPrint = `<div style="font-size: 8.5pt; color: #0284c7; margin-top: 3px; word-break: break-all;">[ភ្ជាប់: ${escapeHtml(attach)}]</div>`;
+            }
+          }
+
+          return `
+            <tr>
+              <td class="col-no">${no}</td>
+              <td class="col-content">
+                <div class="content-cell-title">${content}</div>
+                <div class="content-cell-date">${dateFormatted}</div>
+              </td>
+              <td class="col-qty">${qty}</td>
+              <td class="col-ministry">${ministry}</td>
+              <td class="col-remarks">${remarks ? `<div>${remarks}</div>` : ''}${attachPrint}</td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        tableRows = records.map(item => {
+          const no = item["លេខរៀង"] || item.no;
+          const content = escapeHtml(item["ខ្លឹមសារ"] || item.content || '');
+          const ministryOrigin = escapeHtml(item["ក្រសួងដើម"] || item.ministry_origin || '');
+          const qty = item["ចំនួន"] || item.qty || 1;
+          const origNo = escapeHtml(item["លេខលិខិតដើម"] || item.orig_no || '');
+          const day = String(item["ថ្ងៃ"] || item.day).padStart(2, '0');
+          const month = String(item["ខែ"] || item.month).padStart(2, '0');
+          const monthName = KHMER_MONTHS[month] || month;
+          const year = item["ឆ្នាំ"] || item.year;
+          const origDateFormatted = `ថ្ងៃទី ${day} ខែ ${monthName} ឆ្នាំ ${year}`;
+          const remarks = escapeHtml(item["សេចក្ដីផ្សេងៗ"] || item.remarks || '');
+          const attach = item["ឯកសារភ្ជាប់"] || item.attachmentLink || item.attachment || '';
+          let attachPrint = "";
+          if (attach) {
+            if (attach.startsWith("data:")) {
+              attachPrint = `<div style="font-size: 9pt; color: #475569; margin-top: 3px;">[មានឯកសារភ្ជាប់]</div>`;
+            } else {
+              attachPrint = `<div style="font-size: 8.5pt; color: #0284c7; margin-top: 3px; word-break: break-all;">[ភ្ជាប់: ${escapeHtml(attach)}]</div>`;
+            }
+          }
+
+          return `
+            <tr>
+              <td class="col-no">${no}</td>
+              <td class="col-content">
+                <div class="content-cell-title">${content}</div>
+                <div class="content-cell-date" style="font-weight: 500;">(មកពី៖ ${ministryOrigin})</div>
+              </td>
+              <td class="col-qty">${qty}</td>
+              <td class="col-orig-no">
+                <div style="font-weight: bold;">${origNo}</div>
+                <div class="content-cell-date">${origDateFormatted}</div>
+              </td>
+              <td class="col-remarks">${remarks ? `<div>${remarks}</div>` : ''}${attachPrint}</td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Headers strictly 5 columns
+      let tableHeader = type === 'outgoing' ? `
+        <tr>
+          <th class="col-no">ល.រ</th>
+          <th class="col-content">ខ្លឹមសារលិខិត ថ្ងៃទី ខែ ឆ្នាំ</th>
+          <th class="col-qty">ចំនួន</th>
+          <th class="col-ministry">ក្រសួងទទួល</th>
+          <th class="col-remarks">សេចក្ដីផ្សេងៗ</th>
+        </tr>
+      ` : `
+        <tr>
+          <th class="col-no">ល.រ</th>
+          <th class="col-content">ខ្លឹមសារលិខិត ក្រសួងដើម</th>
+          <th class="col-qty">ចំនួន</th>
+          <th class="col-orig-no">លេខលិខិតដើម ថ្ងៃទី ខែ ឆ្នាំ</th>
+          <th class="col-remarks">សេចក្ដីផ្សេងៗ</th>
+        </tr>
+      `;
+
+      return `
+        <div class="book-container">
+          <div class="book-header">
+            ${instMeta}
+            <h1 class="book-title">${title}</h1>
+            <div class="book-subtitle-line">
+              <div>លេខ <span class="header-underline-val">${noRangeText}</span> សរុប <span class="header-underline-val">${totalText}</span></div>
+              <div>ថ្ងៃទី <span class="header-underline-val">${dateRangeText}</span></div>
+            </div>
+          </div>
+
+          <table class="official-book-table">
+            <thead>${tableHeader}</thead>
+            <tbody>${tableRows}</tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function changePaperSize(size) {
+      document.body.classList.remove('paper-a4', 'paper-a5');
+      document.body.classList.add(`paper-${size}`);
+      const styleSheet = document.getElementById("dynamicPageStyle") || document.createElement("style");
+      styleSheet.id = "dynamicPageStyle";
+      styleSheet.innerHTML = `@page { size: ${size} ${document.getElementById("printOrientation").value}; margin: 1cm; }`;
+      document.head.appendChild(styleSheet);
+    }
+
+    function changeOrientation(orientation) {
+      const size = document.getElementById("printPaperSize").value;
+      const styleSheet = document.getElementById("dynamicPageStyle") || document.createElement("style");
+      styleSheet.id = "dynamicPageStyle";
+      styleSheet.innerHTML = `@page { size: ${size} ${orientation}; margin: 1cm; }`;
+      document.head.appendChild(styleSheet);
+    }
+
+    function exportToCSV() {
+      const bookType = document.getElementById("printBookSelector").value;
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // UTF-8 BOM for Khmer fonts in Excel
+
+      if (bookType === 'outgoing') {
+        const records = getFilteredOutgoing();
+        csvContent += "ID,លេខរៀង,ខ្លឹមសារ,ថ្ងៃ,ខែ,ឆ្នាំ,ចំនួន,ក្រសួងទទួល,សេចក្ដីផ្សេងៗ,ឯកសារភ្ជាប់,CreatedAt\n";
+        records.forEach(r => {
+          csvContent += `"${r.ID || r.id}","${r["លេខរៀង"] || r.no}","${(r["ខ្លឹមសារ"] || r.content || '').replace(/"/g, '""')}","${r["ថ្ងៃ"] || r.day}","${r["ខែ"] || r.month}","${r["ឆ្នាំ"] || r.year}","${r["ចំនួន"] || r.qty}","${(r["ក្រសួងទទួល"] || r.ministry || '').replace(/"/g, '""')}","${(r["សេចក្ដីផ្សេងៗ"] || r.remarks || '').replace(/"/g, '""')}","${(r["ឯកសារភ្ជាប់"] || r.attachment || '').startsWith('data:') ? '[Uploaded File]' : (r["ឯកសារភ្ជាប់"] || r.attachment || '').replace(/"/g, '""')}","${r.CreatedAt || ''}"\n`;
+        });
+      } else {
+        const records = getFilteredIncoming();
+        csvContent += "ID,លេខរៀង,ខ្លឹមសារ,ក្រសួងដើម,ចំនួន,លេខលិខិតដើម,ថ្ងៃ,ខែ,ឆ្នាំ,សេចក្ដីផ្សេងៗ,ឯកសារភ្ជាប់,CreatedAt\n";
+        records.forEach(r => {
+          csvContent += `"${r.ID || r.id}","${r["លេខរៀង"] || r.no}","${(r["ខ្លឹមសារ"] || r.content || '').replace(/"/g, '""')}","${(r["ក្រសួងដើម"] || r.ministry_origin || '').replace(/"/g, '""')}","${r["ចំនួន"] || r.qty}","${(r["លេខលិខិតដើម"] || r.orig_no || '').replace(/"/g, '""')}","${r["ថ្ងៃ"] || r.day}","${r["ខែ"] || r.month}","${r["ឆ្នាំ"] || r.year}","${(r["សេចក្ដីផ្សេងៗ"] || r.remarks || '').replace(/"/g, '""')}","${(r["ឯកសារភ្ជាប់"] || r.attachment || '').startsWith('data:') ? '[Uploaded File]' : (r["ឯកសារភ្ជាប់"] || r.attachment || '').replace(/"/g, '""')}","${r.CreatedAt || ''}"\n`;
+        });
+      }
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `${bookType}_letters_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // =========================================================================
+    // GOOGLE SHEETS API INTEGRATION & LOCAL PERSISTENCE
+    // =========================================================================
+
+    async function syncWithGoogleSheets() {
+      const url = appSettings.appsScriptUrl;
+      const spinner = document.getElementById("syncSpinner");
+      if (spinner) spinner.classList.add("fa-spin");
+
+      if (!url) {
+        if (spinner) spinner.classList.remove("fa-spin");
+        showToast("មិនទាន់បានកំណត់ Google Apps Script URL ទេ។ ទិន្នន័យត្រូវបានរក្សាទុកលើឧបករណ៍នេះ។", "error");
+        updateCloudStatus(false);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${url}?action=getAllData`);
+        const json = await response.json();
+
+        if (json.status === "success" && json.data) {
+          if (Array.isArray(json.data.outgoing) && json.data.outgoing.length > 0) {
+            outgoingLetters = json.data.outgoing;
+          }
+          if (Array.isArray(json.data.incoming) && json.data.incoming.length > 0) {
+            incomingLetters = json.data.incoming;
+          }
+          saveLocalData();
+          renderAll();
+          updateCloudStatus(true);
+          showToast("ទាញយកទិន្នន័យពី Google Sheets ជោគជ័យ!", "success");
+        } else {
+          throw new Error(json.message || "Invalid response");
+        }
+      } catch (err) {
+        console.error("Sync Error:", err);
+        updateCloudStatus(false);
+        showToast("មិនអាចភ្ជាប់ទៅ Google Sheets API: " + err.message, "error");
+      } finally {
+        if (spinner) spinner.classList.remove("fa-spin");
+      }
+    }
+
+    async function sendToGoogleSheets(action, data) {
+      const url = appSettings.appsScriptUrl;
+      if (!url) return;
+
+      try {
+        await fetch(url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action, data })
+        });
+      } catch (err) {
+        console.warn("Background sheet sync notice:", err);
+      }
+    }
+
+    function updateCloudStatus(isOnline) {
+      const dot = document.getElementById("cloudStatusDot");
+      const title = document.getElementById("cloudStatusText");
+      const sub = document.getElementById("cloudStatusSub");
+
+      if (isOnline) {
+        dot.className = "status-dot";
+        title.innerText = "បានភ្ជាប់ Google Sheets";
+        sub.innerText = "ទិន្នន័យសមកាលកម្មតាម Cloud";
+      } else {
+        dot.className = "status-dot offline";
+        title.innerText = "ដំណើរការ Local Storage";
+        sub.innerText = appSettings.appsScriptUrl ? "បាត់ការភ្ជាប់ Google Sheets" : "មិនទាន់ភ្ជាប់ API";
+      }
+    }
+
+    function saveSettings() {
+      appSettings.instName = document.getElementById("setInstName").value.trim() || appSettings.instName;
+      appSettings.deptName = document.getElementById("setDeptName").value.trim() || appSettings.deptName;
+      appSettings.address = document.getElementById("setAddress").value.trim();
+      appSettings.contact = document.getElementById("setContact").value.trim();
+      appSettings.showHeaderPrint = document.getElementById("setShowHeaderPrint").value;
+      appSettings.defaultPaper = document.getElementById("setDefaultPaper").value;
+      appSettings.appsScriptUrl = document.getElementById("setAppsScriptUrl").value.trim();
+      appSettings.spreadsheetId = document.getElementById("setSpreadsheetId").value.trim();
+      appSettings.driveFolderId = document.getElementById("setDriveFolderId").value.trim();
+
+      localStorage.setItem("edudoc_settings", JSON.stringify(appSettings));
+
+      document.getElementById("sideInstName").innerText = appSettings.instName;
+      document.getElementById("sideDeptName").innerText = appSettings.deptName;
+
+      changePaperSize(appSettings.defaultPaper);
+      showToast("បានរក្សាទុកការកំណត់ជោគជ័យ!", "success");
+
+      if (appSettings.appsScriptUrl) {
+        syncWithGoogleSheets();
+      } else {
+        updateCloudStatus(false);
+      }
+    }
+
+    function loadSettings() {
+      const saved = localStorage.getItem("edudoc_settings");
+      if (saved) {
+        try {
+          appSettings = { ...appSettings, ...JSON.parse(saved) };
+        } catch (e) {}
+      }
+
+      document.getElementById("setInstName").value = appSettings.instName;
+      document.getElementById("setDeptName").value = appSettings.deptName;
+      document.getElementById("setAddress").value = appSettings.address;
+      document.getElementById("setContact").value = appSettings.contact;
+      document.getElementById("setShowHeaderPrint").value = appSettings.showHeaderPrint;
+      document.getElementById("setDefaultPaper").value = appSettings.defaultPaper;
+      document.getElementById("setAppsScriptUrl").value = appSettings.appsScriptUrl || "";
+      document.getElementById("setSpreadsheetId").value = appSettings.spreadsheetId || "";
+      document.getElementById("setDriveFolderId").value = appSettings.driveFolderId || "";
+
+      document.getElementById("sideInstName").innerText = appSettings.instName;
+      document.getElementById("sideDeptName").innerText = appSettings.deptName;
+      changePaperSize(appSettings.defaultPaper);
+    }
+
+    function saveLocalData() {
+      localStorage.setItem("edudoc_outgoing", JSON.stringify(outgoingLetters));
+      localStorage.setItem("edudoc_incoming", JSON.stringify(incomingLetters));
+    }
+
+    function loadLocalData() {
+      const outData = localStorage.getItem("edudoc_outgoing");
+      const inData = localStorage.getItem("edudoc_incoming");
+
+      if (outData) {
+        try { outgoingLetters = JSON.parse(outData); } catch(e){}
+      }
+      if (inData) {
+        try { incomingLetters = JSON.parse(inData); } catch(e){}
+      }
+
+      if (outgoingLetters.length === 0 && incomingLetters.length === 0) {
+        loadSampleData(false);
+      }
+    }
+
+    function loadSampleData(showToastNotice = true) {
+      outgoingLetters = [
+        {
+          ID: "OUT_001",
+          "លេខរៀង": 1,
+          "ខ្លឹមសារ": "របាយការណ៍បូកសរុបលទ្ធផលការងារអប់រំ យុវជន និងកីឡា ប្រចាំខែមករា",
+          "ថ្ងៃ": "05",
+          "ខែ": "01",
+          "ឆ្នាំ": "2026",
+          "ចំនួន": 3,
+          "ក្រសួងទទួល": "ទីស្តីការគណៈរដ្ឋមន្ត្រី",
+          "សេចក្ដីផ្សេងៗ": "ឯកសារបន្ទាន់",
+          CreatedAt: new Date().toISOString()
+        },
+        {
+          ID: "OUT_002",
+          "លេខរៀង": 2,
+          "ខ្លឹមសារ": "លិខិតគោរពស្នើសុំគោលការណ៍បើកវគ្គបណ្តុះបណ្តាលគរុកោសល្យថ្មី",
+          "ថ្ងៃ": "12",
+          "ខែ": "01",
+          "ឆ្នាំ": "2026",
+          "ចំនួន": 2,
+          "ក្រសួងទទួល": "ក្រសួងមុខងារសាធារណៈ",
+          "សេចក្ដីផ្សេងៗ": "រង់ចាំការឆ្លើយតប",
+          CreatedAt: new Date().toISOString()
+        },
+        {
+          ID: "OUT_003",
+          "លេខរៀង": 3,
+          "ខ្លឹមសារ": "សេចក្តីណែនាំស្តីពីការរៀបចំការប្រឡងសញ្ញាបត្រមធ្យមសិក្សាទុតិយភូមិ",
+          "ថ្ងៃ": "20",
+          "ខែ": "01",
+          "ឆ្នាំ": "2026",
+          "ចំនួន": 25,
+          "ក្រសួងទទួល": "មន្ទីរអប់រំ យុវជន និងកីឡា រាជធានី-ខេត្ត",
+          "សេចក្ដីផ្សេងៗ": "ផ្សព្វផ្សាយទូទាំងប្រទេស",
+          CreatedAt: new Date().toISOString()
+        }
+      ];
+
+      incomingLetters = [
+        {
+          ID: "IN_001",
+          "លេខរៀង": 1,
+          "ខ្លឹមសារ": "សារាចរណែនាំស្តីពីការរៀបចំផែនការថវិកាប្រចាំឆ្នាំ២០២៦",
+          "ក្រសួងដើម": "ក្រសួងសេដ្ឋកិច្ច និងហិរញ្ញវត្ថុ",
+          "ចំនួន": 2,
+          "លេខលិខិតដើម": "០៤៥ សហវ.អថ",
+          "ថ្ងៃ": "04",
+          "ខែ": "01",
+          "ឆ្នាំ": "2026",
+          "សេចក្ដីផ្សេងៗ": "បញ្ជូនទៅនាយកដ្ឋានហិរញ្ញវត្ថុចាត់ចែង",
+          CreatedAt: new Date().toISOString()
+        },
+        {
+          ID: "IN_002",
+          "លេខរៀង": 2,
+          "ខ្លឹមសារ": "លិខិតអញ្ជើញចូលរួមសិក្ខាសាលាស្តីពីអភិបាលកិច្ចឌីជីថលក្នុងវិស័យសាធារណៈ",
+          "ក្រសួងដើម": "ក្រសួងប្រៃសណីយ៍ និងទូរគមនាគមន៍",
+          "ចំនួន": 1,
+          "លេខលិខិតដើម": "១៨៨ បទ.កប",
+          "ថ្ងៃ": "10",
+          "ខែ": "01",
+          "ឆ្នាំ": "2026",
+          "សេចក្ដីផ្សេងៗ": "ចាត់តំណាងចូលរួម",
+          CreatedAt: new Date().toISOString()
+        }
+      ];
+
+      saveLocalData();
+      renderAll();
+      if (showToastNotice) {
+        showToast("បានបញ្ចូលទិន្នន័យគំរូរួចរាល់!", "success");
+      }
+    }
+
+    // =========================================================================
+    // UTILITIES
+    // =========================================================================
+
+    function getNextNo(list) {
+      if (!list || list.length === 0) return 1;
+      const numbers = list.map(x => parseInt(x["លេខរៀង"] || x.no, 10)).filter(n => !isNaN(n));
+      if (numbers.length === 0) return 1;
+      return Math.max(...numbers) + 1;
+    }
+
+    function sortRecords(list) {
+      list.sort((a, b) => {
+        const noA = parseInt(a["លេខរៀង"] || a.no, 10) || 0;
+        const noB = parseInt(b["លេខរៀង"] || b.no, 10) || 0;
+        return noA - noB;
+      });
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove("active");
+    }
+
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}"></i> <span>${escapeHtml(message)}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return "";
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Attachment Handlers (Upload file converted to base64 data URL)
+    function handleFileUpload(event, prefix) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      // Limit file size to 10MB
+      if (file.size > 10 * 1024 * 1024) {
+        alert("ទំហំឯកសារធំពេក! សូមជ្រើសរើសឯកសារក្រោម 10MB ឬប្រើប្រាស់ Google Drive Link ជំនួសវិញ។");
+        event.target.value = "";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Data = e.target.result;
+        document.getElementById(`${prefix}AttachmentData`).value = base64Data;
+        document.getElementById(`${prefix}AttachmentPreview`).style.display = "flex";
+        document.getElementById(`${prefix}AttachmentName`).innerText = `ឯកសារ៖ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+        showToast(`បានបញ្ចូលឯកសារ "${file.name}" រួចរាល់`, "success");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearAttachment(prefix) {
+      document.getElementById(`${prefix}AttachmentLink`).value = "";
+      document.getElementById(`${prefix}AttachmentData`).value = "";
+      document.getElementById(`${prefix}AttachmentFile`).value = "";
+      document.getElementById(`${prefix}AttachmentPreview`).style.display = "none";
+      document.getElementById(`${prefix}AttachmentName`).innerText = "";
+    }
+  </script>
+</body>
+</html>
